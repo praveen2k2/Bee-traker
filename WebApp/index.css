@@ -283,12 +283,15 @@ main .insights>div span {
     font-size: 2rem;
 }
 
-main .insights>div.expenses span {
+main .insights>div.temperature span {
     background: var(--color-danger);
 }
 
-main .insights>div.income span {
+main .insights>div.humidity span {
     background: var(--color-success);
+}
+main .insights>div.scale span {
+    background: var(--color-primary);
 }
 
 main .insights>div .middle {
