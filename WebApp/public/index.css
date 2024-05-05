@@ -255,6 +255,31 @@ main .date input[type="date"] {
     color: var(--color-dark);
 }
 
+main .count>div {
+    display: flex;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    background: var(--color-white);
+    margin-top: 1rem;
+    box-shadow: var(--box-shadow);
+    transition: all 300ms ease;
+    justify-content: space-evenly;
+}
+
+.beein,
+.beeout {
+    display: flex;
+    align-items: center;
+}
+
+main .count>div span {
+    background: var(--color-primary);
+    padding: 0.5rem;
+    border-radius: 50%;
+    color: var(--color-white);
+    font-size: 2rem;
+}
+
 main .insights {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -270,7 +295,8 @@ main .insights>div {
     transition: all 300ms ease;
 }
 
-main .insights>div:hover {
+main .insights>div:hover,
+.count>div:hover {
     box-shadow: none;
 
 }
@@ -290,6 +316,7 @@ main .insights>div.temperature span {
 main .insights>div.humidity span {
     background: var(--color-success);
 }
+
 main .insights>div.scale span {
     background: var(--color-primary);
 }
