@@ -238,6 +238,10 @@ aside .sidebar .message-count {
 }
 
 /* ==================MAIN====================== */
+main:not(.dashboard) {
+    display: none;
+}
+
 main {
     margin-top: 1.4rem;
 }
