@@ -4,8 +4,8 @@
 #include "addons/RTDBHelper.h"
 #include "time.h"
 
-#define WIFI_SSID "SLT-LTE-WiFi-FA19"
-#define WIFI_PASSWORD "7L0820N1043"
+#define WIFI_SSID "ROUTER SSID"
+#define WIFI_PASSWORD "ROUTER PASSWORD"
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 
