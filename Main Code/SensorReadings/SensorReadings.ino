@@ -9,26 +9,19 @@ void setup() {
 }
 
 void loop() {
-  float h, t, f, hic, hif;
+  float h, t;
   // Call the temp_humid function and assign the return values to variables
-  temp_humid(h, t, f, hic, hif);
+  temperature(h, t);
 
-  Serial.print(F("Humidity: "));
-  Serial.print(h);
-  Serial.print(F("%  Temperature: "));
+  Serial.print("Temperature: ");
   Serial.print(t);
-  Serial.print(F("°C "));
-  Serial.print(f);
-  Serial.print(F("°F  Heat index: "));
-  Serial.print(hic);
-  Serial.print(F("°C "));
-  Serial.print(hif);
-  Serial.println(F("°F"));
-
+  Serial.print(" °C, Humidity: ");
+  Serial.print(h);
+  Serial.println(" %");
   // Add a delay or other logic here if needed
 }
 
-void temp_humid(float &h, float &t, float &f, float &hic, float &hif) {
+void temperature(float &h, float &t) {
   // Wait a few seconds between measurements.
   delay(2000);
 
@@ -37,19 +30,12 @@ void temp_humid(float &h, float &t, float &f, float &hic, float &hif) {
   h = dht.readHumidity();
   // Read temperature as Celsius (the default)
   t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  f = dht.readTemperature(true);
 
   // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
+  if (isnan(h) || isnan(t)) {
     Serial.println(F("Failed to read from DHT sensor!"));
     // Set values to NaN to indicate failure
-    h = t = f = hic = hif = NAN;
+    h = t = NAN;
     return;
   }
-
-  // Compute heat index in Fahrenheit (the default)
-  hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  hic = dht.computeHeatIndex(t, h, false);
 }
