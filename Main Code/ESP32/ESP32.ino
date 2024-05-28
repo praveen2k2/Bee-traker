@@ -3,6 +3,7 @@
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
 #include "time.h"
+#include <ArduinoJson.h>
 
 #define WIFI_SSID "SLT-LTE-WiFi-FA19"
 #define WIFI_PASSWORD "7L0820N1043"
@@ -22,7 +23,6 @@ String uid;
 
 String tempPath = "/temperature";
 String humPath = "/humidity";
-String timePath = "/timestamp";
 
 // Database main path (to be updated in setup with the user UID)
 String databasePath;
@@ -40,7 +40,7 @@ float humidity;
 
 // Timer variables (send new readings every three minutes)
 unsigned long sendDataPrevMillis = 0;
-unsigned long timerDelay = 180000;
+unsigned long timerDelay = 1000;
 
 // Initialize WiFi
 void initWiFi() {
@@ -106,23 +106,26 @@ void setup() {
   Serial.println(uid);
 
   // Update database path
-  databasePath = "/UsersData/" + uid + "/readings";
+  databasePath = "/UsersData/" + uid + "/Hive-01";
 }
 
 void loop() {
   if (Serial.available() > 0) {
-    String data = Serial.readStringUntil('\n');  // Read data until newline character
+    String jsonString = Serial.readStringUntil('\n');  // Read data until newline character
 
-    // Example data format: "Temperature: 25.5 °C, Humidity: 50.2 %"
-    int tempIndex = data.indexOf("Temperature: ");  // Find the index of the temperature value
-    if (tempIndex != -1) {
-      temperature = data.substring(tempIndex + 13, data.indexOf(" °C")).toFloat();  // Extract temperature
+    // Parse the JSON string
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, jsonString);
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
     }
 
-    int humidIndex = data.indexOf("Humidity: ");  // Find the index of the humidity value
-    if (humidIndex != -1) {
-      humidity = data.substring(humidIndex + 10, data.indexOf(" %")).toFloat();  // Extract humidity
-    }
+    // Extract values
+    temperature = doc["temperature"];
+    humidity = doc["humidity"];
 
     // Send new readings to database
     if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
@@ -135,9 +138,8 @@ void loop() {
 
       parentPath = databasePath + "/" + String(timestamp);
 
-      json.set(tempPath.c_str(), String(temperature));
-      json.set(humPath.c_str(), String(humidity));
-      json.set(timePath, String(timestamp));
+      json.set(tempPath.c_str(), float(temperature));
+      json.set(humPath.c_str(), float(humidity));
       Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
     }
   }
