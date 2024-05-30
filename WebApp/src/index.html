@@ -100,14 +100,14 @@
                     <div class="middle">
                         <div class="left">
                             <h3>Temperature</h3>
-                            <h1 class="value" id="temperature">30 ⁰C</h1>
+                            <h1 class="value" id="temperature">⁰C</h1>
                         </div>
                         <div class="progress">
                             <svg>
                                 <circle cx='38' cy='38' r='36'></circle>
                             </svg>
                             <div class="number">
-                                <p id="humidity">81%</p>
+                                <p id="temp">81%</p>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                     <div class="middle">
                         <div class="left">
                             <h3>Humidity</h3>
-                            <h1 class="value" id="humidity">78 %</h1>
+                            <h1 class="value" id="humidity">%</h1>
                         </div>
                         <div class="progress">
                             <svg>
@@ -201,6 +201,8 @@
         <!-- ANALYTICS -->
         <main class="analytics">
             <h1>Analytics</h1>
+            <canvas id="temperatureChart" width="400" height="200"></canvas>
+            <canvas id="humidityChart" width="400" height="200"></canvas>
         </main>
         <!-- END OF ANALYTICS -->
 
@@ -333,6 +335,7 @@
 
     </div>
     <script type="module" src="./index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="./script.js"></script>
 
 </body>

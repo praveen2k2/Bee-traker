@@ -47,6 +47,32 @@ const int visibleItems = SCREEN_HEIGHT / itemHeight;  // Number of items that fi
 unsigned long lastActivity = 0;  // Track the last activity time
 const unsigned long sleepTimeout = 10000;  // 10 seconds timeout
 
+void setup() {
+  Serial.begin(115200);
+  delay(50);
+
+  button.begin(BUTTON_PIN);
+
+  button.setClickHandler(click);
+  button.setLongClickDetectedHandler(longClick);
+  button.setDoubleClickHandler(doubleClick);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;);
+  }
+
+  // Start by showing the MAIN MENU
+  showMenu();
+  lastActivity = millis();  // Initialize last activity time
+}
+
+void loop() {
+  button.loop();
+  if (!isSleeping && (millis() - lastActivity > sleepTimeout)) {
+    enterSleepMode();
+  }
+}
 void showMenu() {
   if (isSleeping) return;  // Do not update the display if in sleep mode
 
@@ -79,33 +105,6 @@ void showMenu() {
   }
 
   display.display();
-}
-
-void setup() {
-  Serial.begin(115200);
-  delay(50);
-
-  button.begin(BUTTON_PIN);
-
-  button.setClickHandler(click);
-  button.setLongClickDetectedHandler(longClick);
-  button.setDoubleClickHandler(doubleClick);
-
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;);
-  }
-
-  // Start by showing the MAIN MENU
-  showMenu();
-  lastActivity = millis();  // Initialize last activity time
-}
-
-void loop() {
-  button.loop();
-  if (!isSleeping && (millis() - lastActivity > sleepTimeout)) {
-    enterSleepMode();
-  }
 }
 
 void click(Button2& btn) {
