@@ -31,7 +31,8 @@ Components we are using:
 
 Project documentations
 
-[Go to Project Docs](https://drive.google.com/drive/folders/1U0-xzh0tzEyrxfGQ3k2xcmliMpTtDy3P?usp=drive_link)
-[PCB](https://praveen-himasha.365.altium.com/designs/8EB615DC-1AD3-4177-92BF-DE147C156EBD)
+[Go to Project Docs](https://drive.google.com/drive/folders/1U0-xzh0tzEyrxfGQ3k2xcmliMpTtDy3P?usp=drive_link).
+
+[PCB Design](https://praveen-himasha.365.altium.com/designs/8EB615DC-1AD3-4177-92BF-DE147C156EBD).
 
 ### Installation
