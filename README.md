@@ -31,6 +31,6 @@ Components we are using:
 
 Project documentations
 
-[Go to project docs](https://drive.google.com/drive/folders/1U0-xzh0tzEyrxfGQ3k2xcmliMpTtDy3P?usp=drive_link){:target="_blank"}
+<a href="http://stackoverflow.com](https://drive.google.com/drive/folders/1U0-xzh0tzEyrxfGQ3k2xcmliMpTtDy3P?usp=drive_link" target="_blank">Go to Project Docs</a>
 
 ### Installation
