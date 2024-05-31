@@ -137,7 +137,7 @@ GenerateClassCluster=0
 DocumentUniqueId=SUHPIURC
 
 [Document6]
-DocumentPath=Sheet2.SchDoc
+DocumentPath=atmega.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
