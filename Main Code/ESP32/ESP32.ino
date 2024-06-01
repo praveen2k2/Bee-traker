@@ -1,3 +1,18 @@
+/*
+
+Atmega:
+TX to TX0
+RX to RX0
+GND to GND
+
+OLED display:
+SCL to D22
+SDA to D21
+VCC to 3v3
+GND to GND
+Button to 23
+*/
+
 #include <WiFi.h>
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
