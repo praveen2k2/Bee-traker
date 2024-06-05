@@ -1,10 +1,9 @@
 // Import the functions need from the SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getDatabase, ref, query, orderByKey, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+import { getDatabase, ref, set, update, query, orderByKey, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
 
-// TODO: Replace the following with your app's Firebase project configuration
-// See: https://firebase.google.com/docs/web/learn-more#config-object
 const firebaseConfig = {
   apiKey: "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y",
   authDomain: "hivelink-abd1a.firebaseapp.com",
@@ -15,20 +14,37 @@ const firebaseConfig = {
   appId: "1:843058360587:web:d1d90e47e657e2bb53320e",
   measurementId: "G-B31PD72N8G"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+const auth = getAuth(app);
+const user = auth.currentUser;
 // Initialize Realtime Database and get a reference
 const database = getDatabase(app);
 
 const temperatureElement = document.getElementById('temperature');
 const humidityElement = document.getElementById('humidity');
 
-const hiveRef = ref(database, 'UsersData/Saijaiu1GKQl3clIFxLhI8Ce6Va2/Hive-01');
+// const hiveRef = ref(database, 'UsersData/Saijaiu1GKQl3clIFxLhI8Ce6Va2/Hive-01');
 
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/auth.user
+    const uid = user.uid;
+    const hiveRef = ref(database, 'UsersData/' + uid + '/Hive-01');
+    checkHiveConditions(hiveRef);
+    loadWifiInfo()
+    updateData(hiveRef);
+    showGraphs(hiveRef);
+    setInterval(updateData, 10000); // Update data every 10 seconds
+    // ...
+  } else {
+    // User is signed out
+    // ...
+  }
+});
 
-function updateData() {
+function updateData(hiveRef) {
   const latestDataQuery = query(hiveRef, orderByKey(), limitToLast(1));
   onValue(latestDataQuery, (snapshot) => {
     const data = snapshot.val();
@@ -44,7 +60,7 @@ function updateData() {
   });
 }
 
-function showGraphs() {
+function showGraphs(hiveRef) {
   const dataQuery = query(hiveRef, orderByKey(), limitToLast(10)); // Fetch 10 recent entries
   onValue(dataQuery, (snapshot) => {
     const data = snapshot.val();
@@ -138,8 +154,7 @@ function showGraphs() {
   });
 }
 
-
-function checkHiveConditions() {
+function checkHiveConditions(hiveRef) {
   const dataQuery = query(hiveRef, orderByKey(), limitToLast(1)); // Fetch recent entries
   onValue(dataQuery, (snapshot) => {
     const data = snapshot.val();
@@ -210,11 +225,53 @@ function timeSince(date) {
   return Math.floor(seconds) + ' seconds ago';
 }
 
-// Call the function to check hive conditions and show messages
-checkHiveConditions();
+const updateInfo = document.getElementById('update');
+const ssid = document.getElementById('ssid');
+const wifiPassword = document.getElementById('wifiPassword');
+const email = document.getElementById('email');
+const password = document.getElementById('password');
 
+function updateProfileInfo(event) {
+  event.preventDefault(); // Prevent form submission and page refresh
+  if (auth.currentUser) {
+    const uid = auth.currentUser.uid;
+    const UserRef = ref(database, 'UsersData/' + uid + '/ProfileInfo');
 
+    const info = {
+      ssid: ssid.value,
+      wifiPassword: wifiPassword.value,
+      email: email.value,
+      password: password.value
+    };
 
-updateData();
-showGraphs();
-setInterval(updateData, 10000); // Update data every 10 seconds
+    update(UserRef, info)
+      .then(() => {
+        alert('WiFi information updated successfully.');
+      })
+      .catch((error) => {
+        alert('Error updating WiFi information:', error);
+      });
+  }
+}
+
+function loadWifiInfo() {
+  if (auth.currentUser) {
+    const uid = auth.currentUser.uid;
+    const UserRef = ref(database, 'UsersData/' + uid + '/ProfileInfo');
+
+    onValue(UserRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        email.value = data.email || '';
+        password.value = data.password || '';
+        ssid.value = data.ssid || '';
+        wifiPassword.value = data.wifiPassword || '';
+      }
+    }, {
+      onlyOnce: true
+    });
+  }
+}
+
+// Add event listener to the update button
+updateInfo.addEventListener('click', updateProfileInfo);
