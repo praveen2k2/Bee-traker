@@ -1,6 +1,6 @@
 // Import the functions need from the SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getDatabase, ref, set, update, query, orderByKey, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+import { getDatabase, ref, update, query, orderByKey, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
 
@@ -177,15 +177,13 @@ function checkHiveConditions(hiveRef) {
       messages.forEach(message => {
         const updateElement = document.createElement('div');
         updateElement.classList.add('update');
-        updateElement.innerHTML = `
-            <div class="profile-photo">
-              <img src="path/to/profile/photo.png" alt="Profile Photo">
-            </div>
-            <div class="message">
-              <p><b>${message.title}</b>: ${message.body}</p>
-              <small class="text-muted">${timeAgo}</small>
-            </div>
-          `;
+        updateElement.innerHTML =
+          `
+          <div class="message">
+              <p><b>${message.title}</b>: ${message.body}</p>
+          <small class="text-muted">${timeAgo}</small>
+          </div>
+          `;
         updateElement.addEventListener('click', () => {
           window.location.href = `details.html?hive=${message.hiveId}&timestamp=${key}`;
         });
@@ -275,3 +273,73 @@ function loadWifiInfo() {
 
 // Add event listener to the update button
 updateInfo.addEventListener('click', updateProfileInfo);
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const addHiveButton = document.querySelector('.add-hive');
+  const popover = document.getElementById('popover');
+  const addHiveButtonPopover = document.getElementById('addHiveButton');
+
+  addHiveButton.addEventListener('click', () => {
+      const rect = addHiveButton.getBoundingClientRect();
+      popover.style.top = `${rect.bottom + window.scrollY}px`;
+      popover.style.left = `${rect.left + window.scrollX}px`;
+      popover.style.display = 'block';
+  });
+
+  addHiveButtonPopover.addEventListener('click', () => {
+      const hiveName = document.getElementById('newHiveName').value;
+      const beeCount = document.getElementById('newHiveBeeCount').value;
+
+      if (hiveName && beeCount) {
+          addHive(hiveName, beeCount);
+          popover.style.display = 'none';
+          document.getElementById('newHiveName').value = '';
+          document.getElementById('newHiveBeeCount').value = '';
+      } else {
+          alert('Please fill in both fields');
+      }
+  });
+
+  function addHive(name, count) {
+      const hivesContainer = document.querySelector('.my-hives');
+      const newHive = document.createElement('div');
+      newHive.className = 'hive';
+
+      newHive.innerHTML = `
+          <div class="icon">
+              <span class="material-icons-sharp">hive</span>
+          </div>
+          <div class="right">
+              <div class="info">
+                  <h3>${name}</h3>
+              </div>
+              <h3 class="total-bee-count">${count}</h3>
+              <span class="material-icons-sharp delete-btn">delete</span>
+          </div>
+      `;
+
+      hivesContainer.insertBefore(newHive, hivesContainer.querySelector('.add-hive'));
+
+      // Add delete event listener to the new hive
+      newHive.querySelector('.delete-btn').addEventListener('click', () => {
+          hivesContainer.removeChild(newHive);
+      });
+  }
+
+  // Add delete event listeners to existing hives
+  document.querySelectorAll('.hive .delete-btn').forEach(deleteBtn => {
+      deleteBtn.addEventListener('click', (event) => {
+          const hive = event.target.closest('.hive');
+          hive.parentNode.removeChild(hive);
+      });
+  });
+
+  // Hide the popover when clicking outside of it
+  document.addEventListener('click', (event) => {
+      if (!popover.contains(event.target) && !addHiveButton.contains(event.target)) {
+          popover.style.display = 'none';
+      }
+  });
+});

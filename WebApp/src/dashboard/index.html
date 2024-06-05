@@ -15,6 +15,7 @@
 
 <body>
     <div class="container">
+
         <!-- SIDEBAR -->
         <aside>
             <div class="top">
@@ -329,59 +330,43 @@
             </div>
 
             <!-- END OF RECENT UPDATES -->
-            <div class="sales-analytics">
+
+            <div class="my-hives">
                 <h2>Hives</h2>
-                <div class="item online">
+                <div class="hive">
                     <div class="icon">
                         <span class="material-icons-sharp">hive</span>
                     </div>
                     <div class="right">
                         <div class="info">
                             <h3>HIVE 01</h3>
-                            <small class="text-muted">Last 24 Hours</small>
                         </div>
-                        <h5 class="success">+39%</h5>
-                        <h3>3849</h3>
+                        <h3 class="total-bee-count">3849</h3>
+                        <span class="material-icons-sharp delete-btn">delete</span>
                     </div>
                 </div>
-                <div class="item online">
-                    <div class="icon">
-                        <span class="material-icons-sharp">hive</span>
-                    </div>
-                    <div class="right">
-                        <div class="info">
-                            <h3>HIVE 02</h3>
-                            <small class="text-muted">Last 24 Hours</small>
-                        </div>
-                        <h5 class="success">+39%</h5>
-                        <h3>3849</h3>
-                    </div>
-                </div>
-                <div class="item online">
-                    <div class="icon">
-                        <span class="material-icons-sharp">hive</span>
-                    </div>
-                    <div class="right">
-                        <div class="info">
-                            <h3>HIVE 03</h3>
-                            <small class="text-muted">Last 24 Hours</small>
-                        </div>
-                        <h5 class="success">+39%</h5>
-                        <h3>3849</h3>
-                    </div>
-                </div>
-                <div class="item add-product">
+
+                <div class="hive add-hive">
                     <div>
                         <span class="material-icons-sharp">add</span>
                         <h3>Add Hive</h3>
                     </div>
                 </div>
             </div>
+            <!-- Modal -->
+            <div class="popover" id="popover">
+                <h3>Add New Hive</h3>
+                <input type="text" id="newHiveName" placeholder="Hive Name">
+                <input type="number" id="newHiveBeeCount" placeholder="Total Bee Count">
+                <button id="addHiveButton">Add Hive</button>
+            </div>
 
         </div>
         <!-- END OF RIGHT PANNEL -->
 
     </div>
+
+
     <script type="module" src="../index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="./script.js"></script>
