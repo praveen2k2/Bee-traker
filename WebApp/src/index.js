@@ -61,7 +61,7 @@ function updateData(hiveRef) {
 }
 
 function showGraphs(hiveRef) {
-  const dataQuery = query(hiveRef, orderByKey(), limitToLast(10)); // Fetch 10 recent entries
+  const dataQuery = query(hiveRef, orderByKey(), limitToLast(24)); // Fetch 10 recent entries
   onValue(dataQuery, (snapshot) => {
     const data = snapshot.val();
     console.log('Data received from Firebase:', data);
@@ -77,13 +77,13 @@ function showGraphs(hiveRef) {
 
     // Loop through all entries in the data object
     Object.entries(data).forEach(([key, entry]) => {
-      const date = new Date(Number(key)); // Convert timestamp string to number, then to Date
+      const date = new Date(Number(key) * 1000); // Convert timestamp string to number, then to Date
       const formattedDate = date.toLocaleString(); // Format the date to a readable string
       timestamps.push(formattedDate); // Use formatted date as the label
       temperatures.push(entry.temperature);
       humidities.push(entry.humidity);
     });
-
+    
     // Create the temperature chart configuration
     const ctxTemp = document.getElementById('temperatureChart').getContext('2d');
     new Chart(ctxTemp, {
@@ -104,8 +104,12 @@ function showGraphs(hiveRef) {
           xAxes: [{
             type: 'time', // Enable time scale for x-axis
             time: {
-              unit: 'minute', // Display timestamps in minutes (adjust as needed)
-              unitStepSize: 10, // Show a data point every 10 minutes
+              unit: 'month', // Display data points every day (adjust as needed)
+              tooltipFormat: 'MM-DD', // Format for tooltip (optional)
+              displayFormats: { // Format for x-axis labels
+                day: 'DD',
+                month: 'MM'
+              }
             }
           }],
           yAxes: [{
@@ -117,7 +121,7 @@ function showGraphs(hiveRef) {
         }
       }
     });
-
+    
     // Create the humidity chart configuration
     const ctxHum = document.getElementById('humidityChart').getContext('2d');
     new Chart(ctxHum, {
@@ -153,6 +157,7 @@ function showGraphs(hiveRef) {
     });
   });
 }
+
 
 function checkHiveConditions(hiveRef) {
   const dataQuery = query(hiveRef, orderByKey(), limitToLast(1)); // Fetch recent entries

@@ -8,7 +8,6 @@
     <title>Hive Link</title>
     <!-- MATERIAL CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-
     <!-- STYLESHEET -->
     <link rel="stylesheet" href="./index.css">
 </head>
@@ -62,9 +61,8 @@
         <!-- DASHBOARD -->
         <main class="dashboard">
             <h1>Dashoard</h1>
-
-            <div class="date">
-                <input type="date" name="date" , id="">
+            <div class="hero">
+                <img src="../../assest/hero.png" alt="Hero Image" class="hero-image">
             </div>
             <div>
                 <a href="">
@@ -202,8 +200,18 @@
         <!-- ANALYTICS -->
         <main class="analytics">
             <h1>Analytics</h1>
+            <div>
+                <label for="startDateTime">Start Date-Time:</label>
+                <input type="text" id="startDateTime" />
+                <label for="endDateTime">End Date-Time:</label>
+                <input type="text" id="endDateTime" />
+                <button id="updateGraphButton">Update Graphs</button>
+              </div>
+
             <canvas id="temperatureChart" width="400" height="200"></canvas>
             <canvas id="humidityChart" width="400" height="200"></canvas>
+            <div id="chart_div" style="max-width:700px; height:400px"></div>
+
         </main>
         <!-- END OF ANALYTICS -->
 
@@ -368,7 +376,7 @@
 
 
     <script type="module" src="../index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./script.js"></script>
 
 </body>
