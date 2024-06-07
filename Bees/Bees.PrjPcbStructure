@@ -1,3 +1,4 @@
 Record=TopLevelDocument|FileName=atmega.SchDoc|SheetNumber=2
 Record=NoMainPathDocument|SourceDocument=atmega.SchDoc|FileName=esp32.SchDoc|SheetNumber=3
 Record=NoMainPathDocument|SourceDocument=atmega.SchDoc|FileName=ir.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=atmega.SchDoc|FileName=Power_Supply_v1.SchDoc|SheetNumber=4
