@@ -1,32 +1,24 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
 
+// TODO: Replace the following with your app's Firebase project configuration
+// See: https://firebase.google.com/docs/web/learn-more#config-object
+const firebaseConfig = {
+  apiKey: "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y",
+  authDomain: "hivelink-abd1a.firebaseapp.com",
+  databaseURL: "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hivelink-abd1a",
+  storageBucket: "hivelink-abd1a.appspot.com",
+  messagingSenderId: "843058360587",
+  appId: "1:843058360587:web:d1d90e47e657e2bb53320e",
+  measurementId: "G-B31PD72N8G"
+};
 
-document.addEventListener("DOMContentLoaded", function () {
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-    // Initially, show the login form and hide the register form
-    loginForm.style.display = "block";
-    registerForm.style.display = "none";
-
-    // Toggle between login and registration forms
-    loginBtn.addEventListener("click", function () {
-        loginForm.style.display = "block";
-        registerForm.style.display = "none";
-        loginBtn.classList.add("active");
-        registerBtn.classList.remove("active");
-    });
-
-    registerBtn.addEventListener("click", function () {
-        loginForm.style.display = "none";
-        registerForm.style.display = "block";
-        loginBtn.classList.remove("active");
-        registerBtn.classList.add("active");
-    });
-});
-
+const database = getDatabase(app);
 
 const signUp = document.getElementById('sign-up');
 signUp.addEventListener("click", function (event) {
@@ -40,9 +32,12 @@ signUp.addEventListener("click", function (event) {
         .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
-            alert("Creating User...")
-            window.location.herf = "index.html"
-            // ...
+
+            set(ref(database, 'UsersData/' + user.uid + '/ProfileInfo'), {
+                email: registerEmail,
+            })
+
+            alert("User Created. Sign-in to your account")
         })
         .catch((error) => {
             const errorCode = error.code;
@@ -67,7 +62,7 @@ signIn.addEventListener("click", function (event) {
       console.log("User signed in:", user);
 
       // Redirect to the user's dashboard after successful login
-      window.location.replace('../'); // Use replace to prevent back button issues
+      window.location.replace('../dashboard/'); // Use replace to prevent back button issues
 
     })
     .catch((error) => {
