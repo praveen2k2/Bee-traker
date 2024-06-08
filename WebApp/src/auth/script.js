@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
 
 // TODO: Replace the following with your app's Firebase project configuration
@@ -17,34 +17,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-
-    // Initially, show the login form and hide the register form
-    loginForm.style.display = "block";
-    registerForm.style.display = "none";
-
-    // Toggle between login and registration forms
-    loginBtn.addEventListener("click", function () {
-        loginForm.style.display = "block";
-        registerForm.style.display = "none";
-        loginBtn.classList.add("active");
-        registerBtn.classList.remove("active");
-    });
-
-    registerBtn.addEventListener("click", function () {
-        loginForm.style.display = "none";
-        registerForm.style.display = "block";
-        loginBtn.classList.remove("active");
-        registerBtn.classList.add("active");
-    });
-});
-
 
 const database = getDatabase(app);
 
