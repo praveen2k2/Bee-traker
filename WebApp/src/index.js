@@ -1,7 +1,7 @@
 // Import the functions need from the SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
 import { getDatabase, ref, update, query, orderByKey, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
 
 const firebaseConfig = {
@@ -44,6 +44,16 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+const signOutButton = document.getElementById('sign-out'); // Change signUp to sign-out
+signOutButton.addEventListener("click", function () {
+  const auth = getAuth();
+  signOut(auth).then(() => {
+    window.location.replace('../auth/');
+  }).catch((error) => {
+    // An error happened.
+  });
+});
+
 function updateData(hiveRef) {
   const latestDataQuery = query(hiveRef, orderByKey(), limitToLast(1));
   onValue(latestDataQuery, (snapshot) => {
@@ -83,7 +93,7 @@ function showGraphs(hiveRef) {
       temperatures.push(entry.temperature);
       humidities.push(entry.humidity);
     });
-    
+
     // Create the temperature chart configuration
     const ctxTemp = document.getElementById('temperatureChart').getContext('2d');
     new Chart(ctxTemp, {
@@ -121,7 +131,7 @@ function showGraphs(hiveRef) {
         }
       }
     });
-    
+
     // Create the humidity chart configuration
     const ctxHum = document.getElementById('humidityChart').getContext('2d');
     new Chart(ctxHum, {
@@ -287,32 +297,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const addHiveButtonPopover = document.getElementById('addHiveButton');
 
   addHiveButton.addEventListener('click', () => {
-      const rect = addHiveButton.getBoundingClientRect();
-      popover.style.top = `${rect.bottom + window.scrollY}px`;
-      popover.style.left = `${rect.left + window.scrollX}px`;
-      popover.style.display = 'block';
+    const rect = addHiveButton.getBoundingClientRect();
+    popover.style.top = `${rect.bottom + window.scrollY}px`;
+    popover.style.left = `${rect.left + window.scrollX}px`;
+    popover.style.display = 'block';
   });
 
   addHiveButtonPopover.addEventListener('click', () => {
-      const hiveName = document.getElementById('newHiveName').value;
-      const beeCount = document.getElementById('newHiveBeeCount').value;
+    const hiveName = document.getElementById('newHiveName').value;
+    const beeCount = document.getElementById('newHiveBeeCount').value;
 
-      if (hiveName && beeCount) {
-          addHive(hiveName, beeCount);
-          popover.style.display = 'none';
-          document.getElementById('newHiveName').value = '';
-          document.getElementById('newHiveBeeCount').value = '';
-      } else {
-          alert('Please fill in both fields');
-      }
+    if (hiveName && beeCount) {
+      addHive(hiveName, beeCount);
+      popover.style.display = 'none';
+      document.getElementById('newHiveName').value = '';
+      document.getElementById('newHiveBeeCount').value = '';
+    } else {
+      alert('Please fill in both fields');
+    }
   });
 
   function addHive(name, count) {
-      const hivesContainer = document.querySelector('.my-hives');
-      const newHive = document.createElement('div');
-      newHive.className = 'hive';
+    const hivesContainer = document.querySelector('.my-hives');
+    const newHive = document.createElement('div');
+    newHive.className = 'hive';
 
-      newHive.innerHTML = `
+    newHive.innerHTML = `
           <div class="icon">
               <span class="material-icons-sharp">hive</span>
           </div>
@@ -325,26 +335,26 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
       `;
 
-      hivesContainer.insertBefore(newHive, hivesContainer.querySelector('.add-hive'));
+    hivesContainer.insertBefore(newHive, hivesContainer.querySelector('.add-hive'));
 
-      // Add delete event listener to the new hive
-      newHive.querySelector('.delete-btn').addEventListener('click', () => {
-          hivesContainer.removeChild(newHive);
-      });
+    // Add delete event listener to the new hive
+    newHive.querySelector('.delete-btn').addEventListener('click', () => {
+      hivesContainer.removeChild(newHive);
+    });
   }
 
   // Add delete event listeners to existing hives
   document.querySelectorAll('.hive .delete-btn').forEach(deleteBtn => {
-      deleteBtn.addEventListener('click', (event) => {
-          const hive = event.target.closest('.hive');
-          hive.parentNode.removeChild(hive);
-      });
+    deleteBtn.addEventListener('click', (event) => {
+      const hive = event.target.closest('.hive');
+      hive.parentNode.removeChild(hive);
+    });
   });
 
   // Hide the popover when clicking outside of it
   document.addEventListener('click', (event) => {
-      if (!popover.contains(event.target) && !addHiveButton.contains(event.target)) {
-          popover.style.display = 'none';
-      }
+    if (!popover.contains(event.target) && !addHiveButton.contains(event.target)) {
+      popover.style.display = 'none';
+    }
   });
 });

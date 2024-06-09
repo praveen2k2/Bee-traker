@@ -160,8 +160,8 @@ aside .logo {
 }
 
 aside .logo img {
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
 }
 
 aside .close {
@@ -392,6 +392,8 @@ main .insights small {
     margin-top: 1.3rem;
     display: block;
 }
+
+
 
 /* ==================RECENT ORDERS====================== */
 main .recent-orders {

@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hive Link</title>
+    <link rel="icon" type="image/x-icon" href="../../assest/favicon.ico">
     <!-- MATERIAL CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <!-- STYLESHEET -->
@@ -19,8 +20,8 @@
         <aside>
             <div class="top">
                 <div class="logo">
-                    <img src="">
-                    <h2>Hive<span class="danger"> Link</span></h2>
+                    <img src="../../assest/logo1.png">
+                    <h1>Hive<span class="primary"> Link</span></h1>
                 </div>
                 <div class="close" id="close-btn">
                     <span class="material-icons-sharp">close</span>
@@ -49,7 +50,7 @@
                     <span class="material-icons-sharp">settings</span>
                     <h3>Settings</h3>
                 </a>
-                <a href="#" data-target="logout">
+                <a href="#" id="sign-out">
                     <span class="material-icons-sharp">logout</span>
                     <h3>Logout</h3>
                 </a>
@@ -61,10 +62,10 @@
         <!-- DASHBOARD -->
         <main class="dashboard">
             <h1>Dashoard</h1>
-            <div class="hero">
+            <div class="hero" style="background: linear-gradient(to bottom, #254757, #25475700);">
                 <img src="../../assest/hero.png" alt="Hero Image" class="hero-image">
             </div>
-            <div>
+            <div >
                 <a href="">
                     <h2 class="" id="title">Hive 01</h2>
                 </a>
@@ -204,13 +205,12 @@
                 <label for="startDateTime">Start Date-Time:</label>
                 <input type="datetime-local" id="startDateTime" />
                 <label for="endDateTime">End Date-Time:</label>
-                <input type="text" id="endDateTime" />
-                <button id="updateGraphButton">Update Graphs</button>
+                <input type="datetime-local" id="endDateTime" />
+                <button id="updateGraphs">Filter</button>
               </div>
 
             <canvas id="temperatureChart" width="400" height="200"></canvas>
             <canvas id="humidityChart" width="400" height="200"></canvas>
-            <div id="chart_div" style="max-width:700px; height:400px"></div>
 
         </main>
         <!-- END OF ANALYTICS -->
