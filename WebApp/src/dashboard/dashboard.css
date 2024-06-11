@@ -5,7 +5,7 @@
     --color-primary: #2656ce;
     --color-danger: #ea3f4d;
     --color-success: #19851d;
-    --color-warning: ##ffbb55;
+    --color-warning: #ffbb55;
     --color-white: #fff;
     --color-info-dark: #7d8da1;
     --color-info-light: #dce1eb;
@@ -249,7 +249,8 @@ main {
 .hero {
     position: relative;
     width: 100%;
-    height: 250px; /* Adjust the height as needed */
+    height: 250px;
+    /* Adjust the height as needed */
     overflow: hidden;
 }
 
@@ -395,16 +396,16 @@ main .insights small {
 
 
 
-/* ==================RECENT ORDERS====================== */
-main .recent-orders {
+/* ==================RECENT MESSAGES====================== */
+main .recent-messages {
     margin-top: 2rem;
 }
 
-main .recent-orders h2 {
+main .recent-messages h2 {
     margin-bottom: 0.8rem;
 }
 
-main .recent-orders table {
+main .recent-messages table {
     background: var(--color-white);
     width: 100%;
     border-radius: var(--card-border-radius);
@@ -414,7 +415,7 @@ main .recent-orders table {
     transition: all 300ms ease;
 }
 
-main .recent-orders table:hover {
+main .recent-messages table:hover {
     box-shadow: none;
 }
 
@@ -428,11 +429,18 @@ main table tbody tr:last-child td {
     border: none;
 }
 
-main .recent-orders a {
+main .recent-messages a {
     text-align: center;
     display: block;
     margin: 1rem auto;
     color: var(--color-primary);
+}
+
+#messagesTable span {
+    padding: 0.5rem;
+    border-radius: 50%;
+    color: var(--color-white);
+    font-size: 1rem;
 }
 
 
@@ -465,6 +473,7 @@ main .recent-orders a {
 .col-75 {
     padding: 0 16px;
 }
+
 .settings .container {
     background-color: var(--color-background);
     padding: 5px 20px 15px 20px;
@@ -506,9 +515,11 @@ main .recent-orders a {
 .settings .btn:hover {
     background-color: var(--color-primary-variant);
 }
+
 .settings hr {
     border: 1px solid lightgrey;
 }
+
 @media (max-width: 800px) {
     .settings .row {
         flex-direction: column;
@@ -593,7 +604,73 @@ main .recent-orders a {
     grid-template-columns: 2.6rem auto;
     gap: 1rem;
     margin-bottom: 1rem;
+    display: flex;
 }
+
+.update .message-icon span {
+    padding: 0.5rem;
+    border-radius: 50%;
+    font-size: 2rem;
+    color: var(--color-white);
+}
+
+.update .message-icon.severe_cold span,
+#messagesTable .message-icon.severe_cold span {
+    background-color: #4069ce;
+
+}
+
+.update .message-icon.emergency_heat span,
+#messagesTable .message-icon.emergency_heat span {
+    background-color: #7b232b;
+}
+
+.update .message-icon.cool_to_dry span,
+#messagesTable .message-icon.cool_to_dry span {
+    background-color: #6584d2;
+}
+
+.update .message-icon.emergency_heat_2 span,
+#messagesTable .message-icon.emergency_heat_2 span {
+    background-color: rgb(222, 140, 38);
+}
+
+.update .message-icon.monitor_weight_loss span,
+#messagesTable .message-icon.monitor_weight_loss span {
+    background-color: #014f01;
+}
+
+.update .message-icon.food_bank span,
+#messagesTable .message-icon.food_bank span {
+    background-color: #ffbb55;
+}
+
+
+/*
+
+.update .message-icon .severe_cold {
+    background-color: rgb(147, 181, 45);
+}
+
+.update .message-icon .emergency_heat {
+    background-color: red;
+}
+
+.update .message-icon .cool_to_dry {
+    background-color: blue;
+}
+
+.update .message-icon .emergency_heat_2 {
+    background-color: blue;
+}
+
+.update .message-icon .monitor_weight_loss {
+    background-color: green;
+}
+
+.update .message-icon .food_bank {
+    background-color: orange;
+} */
 
 /* =====================ANALYTICS===================== */
 .right .my-hives {
@@ -663,6 +740,7 @@ main .recent-orders a {
 .hive .right .info {
     margin-right: 20px;
 }
+
 .hive .delete-btn {
     color: red;
     cursor: pointer;
@@ -676,6 +754,7 @@ main .recent-orders a {
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 .popover input {
     display: block;
     margin-bottom: 10px;
@@ -683,6 +762,7 @@ main .recent-orders a {
     padding: 8px;
     border: 1px solid #ccc;
 }
+
 .popover button {
     padding: 10px 20px;
     background: #007bff;
@@ -690,6 +770,7 @@ main .recent-orders a {
     border: none;
     cursor: pointer;
 }
+
 /* ==================MEDIA QURIES - TABLET==================== */
 @media screen and (max-width: 1200px) {
     .container {
@@ -720,7 +801,7 @@ main .recent-orders a {
         gap: 0;
     }
 
-    main .recent-orders table {
+    main .recent-messages table {
         width: 83vw;
     }
 
@@ -794,13 +875,13 @@ main .recent-orders a {
         padding: 0 1rem;
     }
 
-    main .recent-orders {
+    main .recent-messages {
         position: relative;
         margin: 3rem 0 0 0;
         width: 100%;
     }
 
-    main .recent-orders table {
+    main .recent-messages table {
         width: 100%;
         margin: 0;
     }

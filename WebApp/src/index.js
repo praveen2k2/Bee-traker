@@ -168,9 +168,10 @@ function showGraphs(hiveRef) {
   });
 }
 
+const messagesTable = document.getElementById('messagesTable');
 
 function checkHiveConditions(hiveRef) {
-  const dataQuery = query(hiveRef, orderByKey(), limitToLast(1)); // Fetch recent entries
+  const dataQuery = query(hiveRef, orderByKey(), limitToLast(24)); // Fetch recent entries
   onValue(dataQuery, (snapshot) => {
     const data = snapshot.val();
     console.log('Data received from Firebase:', data);
@@ -182,44 +183,139 @@ function checkHiveConditions(hiveRef) {
 
     const updatesContainer = document.querySelector('.updates');
     updatesContainer.innerHTML = ''; // Clear existing updates
+    const messagesTable = document.getElementById('messagesTable');
+    messagesTable.innerHTML = ''; // Clear existing table entries
+
+    // Create an array to hold all messages
+    let allMessages = [];
 
     // Loop through all entries in the data object
     Object.entries(data).forEach(([key, entry]) => {
-      const timestamp = new Date(Number(key));
+      const timestamp = new Date(Number(key) * 1000);
       const timeAgo = timeSince(timestamp);
       const messages = generateMessages(entry);
 
       messages.forEach(message => {
-        const updateElement = document.createElement('div');
-        updateElement.classList.add('update');
-        updateElement.innerHTML =
-          `
-          <div class="message">
-              <p><b>${message.title}</b>: ${message.body}</p>
-          <small class="text-muted">${timeAgo}</small>
-          </div>
-          `;
-        updateElement.addEventListener('click', () => {
-          window.location.href = `details.html?hive=${message.hiveId}&timestamp=${key}`;
+        allMessages.push({
+          key,
+          timeAgo,
+          ...message
         });
-        updatesContainer.appendChild(updateElement);
       });
+    });
+
+    // Sort messages by timestamp and get the latest 3
+    const latestMessages = allMessages.slice(-3).reverse();
+
+    // Display the latest 3 messages in the updates container
+    latestMessages.forEach(({ key, timeAgo, icon, title, short }) => {
+      const updateElement = document.createElement('div');
+      updateElement.classList.add('update');
+      updateElement.innerHTML =
+        `
+        <div class="update">
+            <div class="message-icon ${icon}">
+                <span class="material-symbols-outlined">${icon}</span>
+            </div>
+            <div class="message">
+                <p><b>${title}</b>: ${short}</p>
+                <small class="text-muted">${timeAgo}</small>
+            </div>
+        </div>
+        `;
+      updateElement.addEventListener('click', () => {
+        window.location.href = `#messagesTable`;
+        // Scroll to the messages table and highlight the corresponding message
+        const targetRow = document.getElementById(`message-${key}`);
+        if (targetRow) {
+          targetRow.scrollIntoView({ behavior: 'smooth' });
+          targetRow.classList.add('highlight');
+          setTimeout(() => {
+            targetRow.classList.remove('highlight');
+          }, 2000);
+        }
+      });
+      updatesContainer.appendChild(updateElement);
+    });
+
+    // Display all messages in the table
+    allMessages.forEach(({ key, timeAgo, icon, hiveId, body }) => {
+      const tableRow = document.createElement('tr');
+      tableRow.id = `message-${key}`;
+      tableRow.innerHTML = `
+        <td class="message-icon ${icon}"><span class="material-symbols-outlined">${icon}</span></td>
+        <td>${hiveId}</td>
+        <td>${timeAgo}</td>
+        <td class="primary">${body}</td>
+      `;
+      messagesTable.appendChild(tableRow);
     });
   });
 }
 
+
 function generateMessages(entry) {
   const messages = [];
-  const idealTemp = 28;
-  if (entry.temperature < idealTemp) {
+  const lowTemp = 32;
+  const highTemp = 35;
+  const lowHumidity = 20;
+  const highHumidity = 40;
+  const weightLoss = 10;
+
+  if (entry.temperature < lowTemp) {
     messages.push({
       hiveId: entry.hiveId,
-      title: 'Hive 1',
-      //title: `Hive ${entry.hiveId}`,
-      body: 'Temperature is below.',
+      icon: `severe_cold`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Temperature drop`,
+      body: `Low temperature of ${entry.temperature}⁰C reported from the hive.`,
     });
   }
-  // Add other conditions and messages as needed
+  if (entry.temperature > highTemp) {
+    messages.push({
+      hiveId: entry.hiveId,
+      icon: `emergency_heat`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Temperature increase`,
+      body: `High temperature of ${entry.temperature}⁰C reported from the hive.`,
+    });
+  }
+  if (entry.humidity < lowHumidity) {
+    messages.push({
+      hiveId: entry.hiveId,
+      icon: `cool_to_dry`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Humidity drop`,
+      body: `Low humidity of ${entry.humidity}% reported from the hive.`,
+    });
+  }
+  if (entry.humidity > highHumidity) {
+    messages.push({
+      hiveId: entry.hiveId,
+      icon: `emergency_heat_2`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Humidity increase`,
+      body: `High humidity of ${entry.humidity}% reported from the hive.`,
+    });
+  }
+  if (entry.weight < weightLoss) {
+    messages.push({
+      hiveId: entry.hiveId,
+      icon: `monitor_weight_loss`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Weight drop`,
+      body: `Weight loss detected in the hive.`,
+    });
+  }
+  if (entry.feedBees) {
+    messages.push({
+      hiveId: entry.hiveId,
+      icon: `food_bank`,
+      title: `Hive ${entry.hiveId}`,
+      short: `Feeding time`,
+      body: `Time to feed the bees.`,
+    });
+  }
   return messages;
 }
 
@@ -238,6 +334,9 @@ function timeSince(date) {
   return Math.floor(seconds) + ' seconds ago';
 }
 
+
+
+// Profile updates
 const updateInfo = document.getElementById('update');
 const ssid = document.getElementById('ssid');
 const wifiPassword = document.getElementById('wifiPassword');
@@ -286,11 +385,10 @@ function loadWifiInfo() {
   }
 }
 
-// Add event listener to the update button
 updateInfo.addEventListener('click', updateProfileInfo);
 
 
-
+// Adding Hives
 document.addEventListener('DOMContentLoaded', () => {
   const addHiveButton = document.querySelector('.add-hive');
   const popover = document.getElementById('popover');
