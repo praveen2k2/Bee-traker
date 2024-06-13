@@ -1,6 +1,0 @@
-Removed Pin From Net: NetName=GND Pin=J1-4
-Removed Pin From Net: NetName=+3.3v Pin=J2-7
-Removed Pin From Net: NetName=+3.3v Pin=Q1-3
-Added Pin To Net: NetName=dhtpw Pin=J2-7
-Added Pin To Net: NetName=dhtpw Pin=Q1-3
-Added Net: Name=dhtpw

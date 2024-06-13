@@ -1,8 +1,0 @@
-Removed Pin From Net: NetName=loadcel switch Pin=U?-4
-Removed Pin From Net: NetName=DHT11 Pin=U?-11
-Added Pin To Net: NetName=DHT11 Pin=U?-6
-Added Pin To Net: NetName=loadcel switch Pin=U?-11
-Change Net Name : Old Net Name=loadcell1 New Net Name=loadcell2
-Added Pin To Net: NetName=loadcell1 Pin=J2-2
-Added Pin To Net: NetName=loadcell1 Pin=U?-4
-Added Net: Name=loadcell1

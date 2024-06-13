@@ -1,7 +1,0 @@
-Removed Pin From Net: NetName=GND Pin=Q5-2
-Removed Pin From Net: NetName=+3.3v Pin=Q5-4
-Removed Pin From Net: NetName=tx Pin=R14-2
-Removed Pin From Net: NetName=NetMD?_34 Pin=R17-2
-Removed Member From Class: ClassName=atmega Member=Q5
-Removed Member From Class: ClassName=atmega Member=R14
-Removed Member From Class: ClassName=atmega Member=R17

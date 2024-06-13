@@ -1,5 +1,4 @@
 #include "DHT.h"
-#include <ArduinoJson.h>
 #define DHTPIN 2  // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
@@ -14,19 +13,12 @@ void loop() {
   // Call the temp_humid function and assign the return values to variables
   temperature(h, t);
 
-  // Create a JSON object
-  StaticJsonDocument<200> doc;
-  doc["temperature"] = t;
-  doc["humidity"] = h;
-
-  // Serialize JSON object to a string
-  String jsonString;
-  serializeJson(doc, jsonString);
-
-  // Send JSON string over Serial
-  Serial.println(jsonString);
-
-  delay(5000);  // Delay for 5 seconds before sending the next reading
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" °C, Humidity: ");
+  Serial.print(h);
+  Serial.println(" %");
+  // Add a delay or other logic here if needed
 }
 
 void temperature(float &h, float &t) {
