@@ -1,15 +1,15 @@
 #define dht11
-#define ir
+#define ir A0
 #define loadcell1
 #define loadcell2
 #define irPower
 #define dhtPower
 #define esppower
 
-int beeCount;
+int beeCount=0;
 
 void setup() {
-  // put your setup code here, to run once:
+  
 
 }
 
@@ -18,8 +18,15 @@ void loop() {
 
 }
 
+//get time from esp32
 int gettime(){
   Serial.begin(9600);
   Serial.write('gt');
   int time=Serial.read();
+  return time;
+}
+
+//get bee count 
+int updateBeeCount(int beeCount){
+   return beeCount++;
 }
