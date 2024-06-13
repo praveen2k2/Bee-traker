@@ -1,19 +1,20 @@
 #include "DHT.h"
 #include <ArduinoJson.h>
 
+//define all pins
 #define WEIGHT_SENSOR_PIN A1
 #define ESP32_GPIO_WAKEUP A2
-//define all pins
 #define DHTPIN 2  // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT11
 #define BEECOUNTERPIN 3  // Pin for the entry sensor
 
+#define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
 int beeCount = 0;
 
 void temperature(float &h, float &t);
 void countBees(int &beeCount);
+void readWeight(float &weight);
 
 void setup() {
   Serial.begin(9600);
@@ -23,16 +24,18 @@ void setup() {
 }
 
 void loop() {
-  float h, t;
-  
+  float h, t, weight;
+
   temperature(h, t);
   countBees(beeCount);
+  readWeight(weight);
   
   // Create a JSON object
   StaticJsonDocument<200> doc;
   doc["temperature"] = t;
   doc["humidity"] = h;
   doc["count"] = beeCount / 2;
+  doc["weight"] = weight;
 
   // Serialize JSON object to a string
   String jsonString;
@@ -72,15 +75,16 @@ void countBees(int &beeCount) {
     Serial.print("Bees Entered: ");
     Serial.println(beeCount);
     delay(100);  // Debounce delay to avoid multiple counts for a single bee
+    return;
   }
 }
 
-float readWeight() {
+void readWeight(float &weight) {
   // Read weight from sensor
   // Example code to read weight from a load cell sensor
   // Replace with your actual weight sensor code
   int rawValue = analogRead(WEIGHT_SENSOR_PIN);
-  float weight = map(rawValue, 0, 1023, 0, 5000); // Assuming 0-5000g range
+  weight = map(rawValue, 0, 1023, 0, 5000); // Assuming 0-5000g range
   return weight;
 }
 
