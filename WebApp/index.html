@@ -1,338 +1,86 @@
-<IDOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset-"UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Hive Link</title>
-        <!-- MATERIAL CDN -->
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hive Link</title>
+    <link rel="icon" type="image/x-icon" href="./src/assest/favicon.ico">
+    <link rel="stylesheet" href="./src/landing.css">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-        <!-- STYLESHEET -->
-        <link rel="stylesheet" href="./index.css">
-    </head>
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
 
-    <body>
-        <div class="container">
-            <!-- SIDEBAR -->
-            <aside>
-                <div class="top">
-                    <div class="logo">
-                        <img src="./images/logo.png">
-                        <h2>Hive<span class="danger"> Link</span></h2>
-                    </div>
-                    <div class="close" id="close-btn">
-                        <span class="material-icons-sharp">close</span>
-                    </div>
-                </div>
+        .spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
 
-                <div class="sidebar">
-                    <a href="#" class="dashboard-tab" data-target="dashboard">
-                        <span class="material-icons-sharp">grid_view</span>
-                        <h3>Dashboard</h3>
-                    </a>
-                    <a href="#" class="analytics-tab" data-target="analytics">
-                        <span class="material-icons-sharp">insights</span>
-                        <h3>Analytics</h3>
-                    </a>
-                    <a href="#" class="messages-tab" data-target="messages">
-                        <span class="material-icons-sharp">mail_outline</span>
-                        <h3>Messages</h3>
-                        <span class="message-count">26</span>
-                    </a>
-                    <a href="#" class="reports-tab" data-target="reports">
-                        <span class="material-icons-sharp">report_gmailerrorred</span>
-                        <h3>Reports</h3>
-                    </a>
-                    <a href="#" class="settings-tab" data-target="settings">
-                        <span class="material-icons-sharp">settings</span>
-                        <h3>Settings</h3>
-                    </a>
-                    <a href="#" data-target="logout">
-                        <span class="material-icons-sharp">logout</span>
-                        <h3>Logout</h3>
-                    </a>
-                </div>
+        .overlay {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: left;
+            color: rgb(0, 0, 0);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(11.6px);
+            -webkit-backdrop-filter: blur(11.6px);
+            width: 60vw;
+            margin-top: 10vh;
+            margin-bottom: 30px;
+            background-color: rgba(255, 255, 255, 0.236);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
 
-            </aside>
-            <!-- END OF SIDEBAR -->
+        }
 
-            <!-- DASHBOARD -->
-            <main class="dashboard">
-                <h1>Dashoard</h1>
+        .overlay button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2656ce;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
 
-                <div class="date">
-                    <input type="date">
-                </div>
-                <div>
-                    <a href="">
-                        <h2 class="" id="title">Hive 01</h2>
-                    </a>
-                </div>
-
-                <!-- COUNTS -->
-                <div class="count">
-                    <div class="middle">
-                        <div class="beein">
-                            <span class="material-icons-sharp">emoji_nature</span>
-                            <div>
-                                <h2>Bee In</h2>
-                                <h1>400</h1>
-                            </div>
-                        </div>
-                        <div class="beeout">
-                            <span class="material-icons-sharp">emoji_nature</span>
-                            <div>
-                                <h2>Bee In</h2>
-                                <h1>190</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END OF COUNTS -->
-
-                <!-- INSIGHTS -->
-                <div class="insights">
-
-                    <div class="temperature">
-                        <span class="material-icons-sharp">thermostat</span>
-                        <div class="middle">
-                            <div class="left">
-                                <h3>Temperature</h3>
-                                <h1>30 ⁰C</h1>
-                            </div>
-                            <div class="progress">
-                                <svg>
-                                    <circle cx='38' cy='38' r='36'></circle>
-                                </svg>
-                                <div class="number">
-                                    <p>81%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <small class="text-muted">Last 24 Hours</small>
-                    </div>
-
-                    <div class="humidity">
-                        <span class="material-icons-sharp">opacity</span>
-                        <div class="middle">
-                            <div class="left">
-                                <h3>Humidity</h3>
-                                <h1>78 %</h1>
-                            </div>
-                            <div class="progress">
-                                <svg>
-                                    <circle cx='38' cy='38' r='36'></circle>
-                                </svg>
-                                <div class="number">
-                                    <p>81%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <small class="text-muted">Last 24 Hours</small>
-                    </div>
-
-                    <div class="scale">
-                        <span class="material-icons-sharp">scale</span>
-                        <div class="middle">
-                            <div class="left">
-                                <h3>Hive Weight</h3>
-                                <h1>900 g</h1>
-                            </div>
-                            <div class="progress">
-                                <svg>
-                                    <circle cx='38' cy='38' r='36'></circle>
-                                </svg>
-                                <div class="number">
-                                    <p>81%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <small class="text-muted">Last 24 Hours</small>
-                    </div>
-                </div>
-                <!-- END OF INSIGHTS -->
-
-                <!-- MESSAGES -->
-                <div class="recent-orders" hidden>
-                    <h2>Recent Orders</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Product Number</th>
-                                <th>Payment</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Foldable Mini Drone</td>
-                                <td>85631</td>
-                                <td>Due</td>
-                                <td class="warning">Pending</td>
-                                <td class="primary">Details </td>
-                            </tr>
-                            <tr>
-                                <td>Foldable Mini Drone</td>
-                                <td>85631</td>
-                                <td>Due</td>
-                                <td class="warning">Pending</td>
-                                <td class="primary">Details </td>
-                            </tr>
-                            <tr>
-                                <td>Foldable Mini Drone</td>
-                                <td>85631</td>
-                                <td>Due</td>
-                                <td class="warning">Pending</td>
-                                <td class="primary">Details </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <a href="#">Show All</a>
-                </div>
-                <!-- END OF MASSEGES -->
-
-            </main>
-            <!-- END OF DASHBOARD -->
-
-            <!-- ANALYTICS -->
-            <main class="analytics">
-                <h1>Analytics</h1>
-            </main>
-            <!-- END OF ANALYTICS -->
-
-            <!-- MESSAGES -->
-            <main class="messages">
-                <h1>Messages</h1>
-            </main>
-            <!-- END OF MESSAGES -->
-
-            <!-- REPORTS -->
-            <main class="reports">
-                <h1>Reports</h1>
-            </main>
-            <!-- END OF REPORTS -->
-
-            <!-- SETTINGS -->
-            <main class="settings">
-                <h1>Settings</h1>
-            </main>
-            <!-- END OF SETTINGS -->
-
-            <!-- RIGHT PANNEL -->
-            <div class="right">
-
-                <div class="top">
-                    <button id="menu-btn">
-                        <span class="material-icons-sharp">menu</span>
-                    </button>
-                    <div class="theme-toggler">
-                        <span class="material-icons-sharp active">light_mode</span>
-                        <span class="material-icons-sharp">dark_mode</span>
-                    </div>
-                    <div class="profile">
-                        <div class="info">
-                            <p>Hey, <b>User</b></p>
-                            <small class="text-muted">Admin</small>
-                        </div>
-                        <div class="profile-photo">
-                            <img src="./images/profile-1.jpg">
-                        </div>
-                    </div>
-                </div>
-                <!-- END OF TOP -->
-
-                <div class="recent-updates">
-                    <h2>Recent Updates</h2>
-                    <div class="updates">
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="./images/profile-2.jpg">
-                            </div>
-                            <div class="message">
-                                <p><b>Hive 01:</b> Sudden temperature increase.</p>
-                                <small class="text-muted">2 Minutes Ago</small>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="./images/profile-2.jpg">
-                            </div>
-                            <div class="message">
-                                <p><b>Hive 03:</b> Weight of the hive decreased past week.</p>
-                                <small class="text-muted">2 Minutes Ago</small>
-                            </div>
-                        </div>
-                        <div class="update">
-                            <div class="profile-photo">
-                                <img src="./images/profile-2.jpg">
-                            </div>
-                            <div class="message">
-                                <p><b>Hive 02:</b> Feed the bees.</p>
-                                <small class="text-muted">2 Minutes Ago</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- END OF RECENT UPDATES -->
-                <div class="sales-analytics">
-                    <h2>Hives</h2>
-                    <div class="item online">
-                        <div class="icon">
-                            <span class="material-icons-sharp">hive</span>
-                        </div>
-                        <div class="right">
-                            <div class="info">
-                                <h3>HIVE 01</h3>
-                                <small class="text-muted">Last 24 Hours</small>
-                            </div>
-                            <h5 class="success">+39%</h5>
-                            <h3>3849</h3>
-                        </div>
-                    </div>
-                    <div class="item online">
-                        <div class="icon">
-                            <span class="material-icons-sharp">hive</span>
-                        </div>
-                        <div class="right">
-                            <div class="info">
-                                <h3>HIVE 02</h3>
-                                <small class="text-muted">Last 24 Hours</small>
-                            </div>
-                            <h5 class="success">+39%</h5>
-                            <h3>3849</h3>
-                        </div>
-                    </div>
-                    <div class="item online">
-                        <div class="icon">
-                            <span class="material-icons-sharp">hive</span>
-                        </div>
-                        <div class="right">
-                            <div class="info">
-                                <h3>HIVE 03</h3>
-                                <small class="text-muted">Last 24 Hours</small>
-                            </div>
-                            <h5 class="success">+39%</h5>
-                            <h3>3849</h3>
-                        </div>
-                    </div>
-                    <div class="item add-product">
-                        <div>
-                            <span class="material-icons-sharp">add</span>
-                            <h3>Add Hive</h3>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <!-- END OF RIGHT PANNEL -->
-
+<body>
+    <div id="container">
+        <spline-viewer url="https://prod.spline.design/NqJzUUDUW9aZJbvT/scene.splinecode"
+            class="spline-viewer"></spline-viewer>
+        <div class="overlay">
+            <h1>Welcome to Hive Link</h1>
+            <p>Monitor the health conditions of your hives remotely and open your hives only for the right reasons...
+            </p>
+            <button onclick="redirectToPage()">Get Started</button>
         </div>
-        <script src="./index.js"></script>
-    </body>
+    </div>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.5.5/build/spline-viewer.js"></script>
 
-    </html>
+    <script>
+        function redirectToPage() {
+            window.location.href = './src/auth/'; // Replace with your desired URL
+        }
+    </script>
+</body>
+
+</html>
