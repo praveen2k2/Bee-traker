@@ -17,9 +17,7 @@ DHT11 dht11(4);
 
 int beeCount = 0;
 bool currentState;
-int h, t;
-float weight;
-bool needToUpdate=false;
+int lastUpdate,currentTime=0;
 
 void setup() {
   //dht.begin();
@@ -43,7 +41,8 @@ void setup() {
 //use the main loop only for functions which should run on every cycle
 void loop() {
   updateBeeCount(beeCount);
-  upadte();
+  update(lastUpdate,beeCount,currentTime);
+  currentTime++;
 }
 
 //get bee count 
@@ -52,23 +51,23 @@ void updateBeeCount(int &beeCount){
   if(currentState!=newState){
     beeCount ++;
     currentState=newState;
-
-     //upadate here to increase the time 
-    if(beeCount > 10){
-    Serial.begin(9600);
-    while (!Serial) {;}
-    delay(10);
-    Serial.print(1);
-    beeCount=0;
-    delay(1000);
-   }
    }
    delay(10);//a delay is need to get readings correctly
   return ;
 }
-
+void update(int &lastUpdate,int &beeCount,int currentTime){
+  if(currentTime-lastUpdate>10000){
+    int h, t;
+    float weight;
+    dhtdata(h,t);
+    sendData(beeCount,h,t,weight);
+    beeCount=0;
+    lastUpdate=currentTime;
+  }
+  //else(delay(1));
+}
 //function for send data with esp
-void sendData(int beeCount,int h,int t, int weight){
+void sendData(int beeCount,int h,int t, float weight){
   Serial.begin(9600);
   while (!Serial) {;}
   // Create a JSON object
@@ -103,6 +102,7 @@ void dhtdata(int &h, int &t) {
     h = t = NAN;
     return;
   }
+  digitalWrite(espPower,LOW);
 }
 
 
