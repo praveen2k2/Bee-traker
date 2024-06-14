@@ -2,10 +2,13 @@
 #include <ArduinoJson.h>
 
 //define all pins
-#define WEIGHT_SENSOR_PIN A1
-#define ESP32_GPIO_WAKEUP A2
-#define DHTPIN 2  // Digital pin connected to the DHT sensor
-#define BEECOUNTERPIN 3  // Pin for the entry sensor
+#define DHTPIN 4  // Digital pin connected to the DHT sensor
+#define ir 14 
+#define loadcell1 2
+#define loadcell2 3
+#define loadCSwitch 5
+#define espPower 6
+#define irPower 7
 
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
@@ -53,7 +56,7 @@ void loop() {
 
 void temperature(float &h, float &t) {
   // Wait a few seconds between measurements.
-  delay(2000);
+  delay(10000);
   
   h = dht.readHumidity();
   // Read temperature as Celsius
