@@ -1,4 +1,5 @@
-#include "DHT.h"
+//#include "DHT.h"
+#include <DHT11.h>
 #include <ArduinoJson.h>
 
 //define all pins
@@ -9,19 +10,19 @@
 #define loadCSwitch 5
 #define espPower 6
 #define irPower 7
-
-#define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
+#define ESP32_GPIO_WAKEUP 1
+//#define DHTTYPE DHT11
+//DHT dht(DHTPIN, DHTTYPE);
+DHT11 dht11(4);
 
 int beeCount = 0;
 bool currentState;
-
-void temperature(float &h, float &t);
-void countBees(int &beeCount);
-void readWeight(float &weight);
+int h, t;
+float weight;
+bool needToUpdate=false;
 
 void setup() {
-  dht.begin();
+  //dht.begin();
   pinMode(ir, INPUT);
   pinMode(loadcell1, INPUT);
   pinMode(loadcell2, INPUT);
@@ -39,41 +40,61 @@ void setup() {
 
 }
 
+//use the main loop only for functions which should run on every cycle
 void loop() {
-  float h, t, weight;
+  updateBeeCount(beeCount);
+  upadte();
+}
 
-  temperature(h, t);
-  countBees(beeCount);
-  readWeight(weight);
-  
+//get bee count 
+void updateBeeCount(int &beeCount){
+  bool newState=digitalRead(ir);
+  if(currentState!=newState){
+    beeCount ++;
+    currentState=newState;
+
+     //upadate here to increase the time 
+    if(beeCount > 10){
+    Serial.begin(9600);
+    while (!Serial) {;}
+    delay(10);
+    Serial.print(1);
+    beeCount=0;
+    delay(1000);
+   }
+   }
+   delay(10);//a delay is need to get readings correctly
+  return ;
+}
+
+//function for send data with esp
+void sendData(int beeCount,int h,int t, int weight){
+  Serial.begin(9600);
+  while (!Serial) {;}
   // Create a JSON object
   StaticJsonDocument<200> doc;
   doc["temperature"] = t;
   doc["humidity"] = h;
-  doc["count"] = beeCount / 2;
+  doc["count"] = beeCount;
   doc["weight"] = weight;
 
   // Serialize JSON object to a string
   String jsonString;
   serializeJson(doc, jsonString);
-
+  delay(5000);
   // Send JSON string over Serial
   Serial.println(jsonString);
-
-  delay(5000);  // Delay for 5 seconds before sending the next reading
+  Serial.end();
 }
 
-
-
 //sensors management 
-
-void temperature(float &h, float &t) {
+void dhtdata(int &h, int &t) {
   // Wait a few seconds between measurements.
+  digitalWrite(espPower,HIGH);
   delay(10000);
   
-  h = dht.readHumidity();
-  // Read temperature as Celsius
-  t = dht.readTemperature();
+  h = dht11.readHumidity();
+  t = dht11.readTemperature();
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
@@ -84,22 +105,13 @@ void temperature(float &h, float &t) {
   }
 }
 
-void countBees(int &beeCount) {
-  // Read the state of the entry sensor
-  if (digitalRead(BEECOUNTERPIN) == HIGH) {
-    beeCount++;
-    Serial.print("Bees Entered: ");
-    Serial.println(beeCount);
-    delay(100);  // Debounce delay to avoid multiple counts for a single bee
-    return;
-  }
-}
+
 
 void readWeight(float &weight) {
   // Read weight from sensor
   // Example code to read weight from a load cell sensor
   // Replace with your actual weight sensor code
-  int rawValue = analogRead(WEIGHT_SENSOR_PIN);
+  int rawValue = analogRead(loadcell1);
   weight = map(rawValue, 0, 1023, 0, 5000); // Assuming 0-5000g range
   return weight;
 }
@@ -134,6 +146,7 @@ void powerUp(){
 void onBoardLED(){
   // desply the funtion running ,data communication and some other data from a LED beeps. For error mannaging.
   }
+
 
 void errorDiagnosis(){
   //try to detect any posible errors in the system
