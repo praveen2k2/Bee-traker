@@ -14,16 +14,29 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 int beeCount = 0;
+bool currentState;
 
 void temperature(float &h, float &t);
 void countBees(int &beeCount);
 void readWeight(float &weight);
 
 void setup() {
-  Serial.begin(9600);
   dht.begin();
+  pinMode(ir, INPUT);
+  pinMode(loadcell1, INPUT);
+  pinMode(loadcell2, INPUT);
+  pinMode(loadCSwitch, OUTPUT);
+  pinMode(espPower, OUTPUT);
+  pinMode(irPower, OUTPUT);
 
-  pinMode(BEECOUNTERPIN, INPUT);
+  Serial.begin(9600);
+  while (!Serial) {
+    ;  // wait for serial port to connect. Needed for native USB port only
+  }
+  Serial.println("Starting HiveLink....");
+  Serial.end();
+  currentState= digitalRead(ir);
+
 }
 
 void loop() {
@@ -64,7 +77,7 @@ void temperature(float &h, float &t) {
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
+    //Serial.println(F("Failed to read from DHT sensor!"));
     // Set values to NaN to indicate failure
     h = t = NAN;
     return;
