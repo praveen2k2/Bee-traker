@@ -28,10 +28,8 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   beeCount=updateBeeCount(beeCount);
-  //Serial.println(beeCount);
-  delay(10);//a delay is need to get readings correctly
+ 
 
 }
 
@@ -42,15 +40,18 @@ int updateBeeCount(int beeCount){
   if(currentState!=newState){
     beeCount ++;
     currentState=newState;
+
      //upadate here to increase the time 
     if(beeCount > 10){
-    //Serial.begin(9600);
-    //while (!Serial) {;}
+    Serial.begin(9600);
+    while (!Serial) {;}
+    delay(10);
     Serial.print(1);
     beeCount=0;
     delay(1000);
    }
    }
+   delay(10);//a delay is need to get readings correctly
   return beeCount;
 }
 
