@@ -22,6 +22,7 @@ Button to 23
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "Button2.h"
+#include <esp_sleep.h>
 
 // WiFi and Firebase configuration
 #define WIFI_SSID "SLT-LTE-WiFi-FA19"
@@ -32,11 +33,12 @@ Button to 23
 #define USER_PASSWORD "User@2002"
 
 // Button and display configuration
-#define BUTTON_PIN 23
+#define BUTTON_PIN  23
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 
-RTC_DATA_ATTR int bootCount = 0;  // Number of reboots
+// Wake-up pin
+#define WAKE_UP_PIN 25
 
 Button2 button;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -51,12 +53,12 @@ unsigned long lastActivity = 0;
 const unsigned long sleepTimeout = 10000;
 
 // Home menu items
-String HomeMenu[] = {
+String HomeMenu[]  = {
   "Temperature",
   "Humidity",
   "Weight",
   "Bee Count",
-  "QR Code",
+  "QR Code",      
   "Sleep"
 };
 int const TotalHomeItems = sizeof(HomeMenu) / sizeof(HomeMenu[0]);
@@ -95,61 +97,67 @@ void longClick(Button2& btn);
 void doubleClick(Button2& btn);
 void enterSleepMode();
 void wakeUp();
-void print_GPIO_wake_up();
+void deepSleep();
+void handleFirebaseUpload();
 
 void setup() {
-  Serial.begin(9600);  // Start serial port at 115200 baud rate
+  Serial.begin(9600);
 
-  bootCount++;                                          // Increment the number of boots by 1
-  Serial.println("Boot number: " + String(bootCount));  // Print the boot number
+  // Wake up reason
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+  
+  if (wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1) {
+    Serial.println("Woke up from deep sleep");
+    initWiFi();
+    handleFirebaseUpload();
+  } else {
+    initWiFi();
+    configTime(0, 0, ntpServer);
 
-  print_GPIO_wake_up();  // Determine which GPIO caused the wake-up
+    // Firebase configuration
+    config.api_key = API_KEY;
+    auth.user.email = USER_EMAIL;
+    auth.user.password = USER_PASSWORD;
+    config.database_url = DATABASE_URL;
+    Firebase.reconnectWiFi(true);
+    fbdo.setResponseSize(4096);
+    config.token_status_callback = tokenStatusCallback;
+    config.max_token_generation_retry = 5;
 
-  //ENTER THE CODE TO TRANSMIT DATA TO THE SERVER HERE
-  // =====================================================
-  //Serial.begin(9600);
+    Firebase.begin(&config, &auth);
 
-  initWiFi();
-  configTime(0, 0, ntpServer);
+    // Wait for user UID
+    Serial.println("Getting User UID");
+    while ((auth.token.uid) == "") {
+      Serial.print('.');
+      delay(1000);
+    }
+    uid = auth.token.uid.c_str();
+    Serial.print("User UID: ");
+    Serial.println(uid);
 
-  // Firebase configuration
-  config.api_key = API_KEY;
-  auth.user.email = USER_EMAIL;
-  auth.user.password = USER_PASSWORD;
-  config.database_url = DATABASE_URL;
-  Firebase.reconnectWiFi(true);
-  fbdo.setResponseSize(4096);
-  config.token_status_callback = tokenStatusCallback;
-  config.max_token_generation_retry = 5;
+    databasePath = "/UsersData/" + uid + "/Hive-01";
 
-  Firebase.begin(&config, &auth);
+    button.begin(BUTTON_PIN);
+    button.setClickHandler(click);
+    button.setLongClickDetectedHandler(longClick);
+    button.setDoubleClickHandler(doubleClick);
 
-  // Wait for user UID
-  Serial.println("Getting User UID");
-  while ((auth.token.uid) == "") {
-    Serial.print('.');
-    delay(1000);
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+      Serial.println(F("SSD1306 allocation failed"));
+      for (;;);
+    }
+
+    showMenu();
+    lastActivity = millis();
   }
-  uid = auth.token.uid.c_str();
-  Serial.print("User UID: ");
-  Serial.println(uid);
 
-  databasePath = "/UsersData/" + uid + "/Hive-01";
+  // Set up the wake-up pin
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_25, 0); // Use pin 25 to wake up from serial data
+  esp_sleep_enable_ext1_wakeup(BIT(BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH); // Use button to wake up
+}
 
-  button.begin(BUTTON_PIN);
-  button.setClickHandler(click);
-  button.setLongClickDetectedHandler(longClick);
-  button.setDoubleClickHandler(doubleClick);
-
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for (;;)
-      ;
-  }
-
-  showMenu();
-  lastActivity = millis();
-
+void loop() {
   if (Serial.available() > 0) {
     String jsonString = Serial.readStringUntil('\n');
     StaticJsonDocument<200> doc;
@@ -181,25 +189,6 @@ void setup() {
   if (!isSleeping && (millis() - lastActivity > sleepTimeout)) {
     enterSleepMode();
   }
-  //======================================================
-
-  Serial.println("I'm going to sleep now.");  // Print a statement before entering deep sleep
-
-  //esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK, ESP_EXT1_WAKEUP_ANY_HIGH);  // Configure external wake-up
-  esp_sleep_enable_ext1_wakeup((1 << GPIO_NUM_01) | (1 << GPIO_NUM_03), ESP_EXT1_WAKEUP_ANY_HIGH);
-  delay(1000);  // Adding a 1 second delay to avoid multiple presses
-
-  esp_deep_sleep_start();  // Enter deep sleep mod
-}
-
-void loop() {
-}
-
-// Function for determining the GPIO that caused the wake-up
-void print_GPIO_wake_up() {
-  uint64_t GPIO_number = esp_sleep_get_ext1_wakeup_status();
-  Serial.print("Wake up caused because of GPIO: ");
-  Serial.println((log(GPIO_number)) / log(2), 0);
 }
 
 void initWiFi() {
@@ -330,6 +319,7 @@ void enterSleepMode() {
   Serial.println("Entering sleep mode");
   display.ssd1306_command(SSD1306_DISPLAYOFF);
   isSleeping = true;
+  deepSleep();
 }
 
 void wakeUp() {
@@ -340,4 +330,40 @@ void wakeUp() {
   menuOffset = 0;
   showMenu();
   lastActivity = millis();
+}
+
+void deepSleep() {
+  Serial.println("Entering deep sleep");
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_25, 0); // Use pin 25 to wake up from serial data
+  esp_sleep_enable_ext1_wakeup(BIT(BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH); // Use button to wake up
+  esp_deep_sleep_start();
+}
+
+void handleFirebaseUpload() {
+  if (Serial.available() > 0) {
+    String jsonString = Serial.readStringUntil('\n');
+    StaticJsonDocument<200> doc;
+    DeserializationError error = deserializeJson(doc, jsonString);
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+
+    temperature = doc["temperature"];
+    humidity = doc["humidity"];
+
+    if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
+      sendDataPrevMillis = millis();
+      timestamp = getTime();
+      Serial.print("time: ");
+      Serial.println(timestamp);
+
+      parentPath = databasePath + "/" + String(timestamp);
+      json.set(tempPath.c_str(), float(temperature));
+      json.set(humPath.c_str(), float(humidity));
+      Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
+    }
+  }
 }
