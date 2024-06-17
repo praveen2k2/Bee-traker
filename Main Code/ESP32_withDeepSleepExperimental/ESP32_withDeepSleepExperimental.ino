@@ -1,18 +1,3 @@
-/*
-
-Atmega:
-TX to TX0
-RX to RX0
-GND to GND
-
-OLED display:
-SCL to D22
-SDA to D21
-VCC to 3v3
-GND to GND
-Button to 23
-*/
-
 #include <WiFi.h>
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
@@ -38,7 +23,7 @@ Button to 23
 #define SCREEN_HEIGHT 64
 
 // Wake-up pin
-#define WAKE_UP_PIN 25
+#define WAKE_UP_PIN GPIO_NUM_25
 
 Button2 button;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -50,7 +35,7 @@ bool isSleeping = false;
 const int itemHeight = 16;
 const int visibleItems = SCREEN_HEIGHT / itemHeight;
 unsigned long lastActivity = 0;
-const unsigned long sleepTimeout = 10000;
+const unsigned long sleepTimeout = 10000; // 10 seconds
 
 // Home menu items
 String HomeMenu[]  = {
@@ -105,11 +90,10 @@ void setup() {
 
   // Wake up reason
   esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
-  
+
   if (wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1) {
     Serial.println("Woke up from deep sleep");
     initWiFi();
-    handleFirebaseUpload();
   } else {
     initWiFi();
     configTime(0, 0, ntpServer);
@@ -153,39 +137,15 @@ void setup() {
   }
 
   // Set up the wake-up pin
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_25, 0); // Use pin 25 to wake up from serial data
+  esp_sleep_enable_ext0_wakeup(WAKE_UP_PIN, 0); // Use pin 25 to wake up from serial data
   esp_sleep_enable_ext1_wakeup(BIT(BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH); // Use button to wake up
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    String jsonString = Serial.readStringUntil('\n');
-    StaticJsonDocument<200> doc;
-    DeserializationError error = deserializeJson(doc, jsonString);
-
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-
-    temperature = doc["temperature"];
-    humidity = doc["humidity"];
-
-    if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
-      sendDataPrevMillis = millis();
-      timestamp = getTime();
-      Serial.print("time: ");
-      Serial.println(timestamp);
-
-      parentPath = databasePath + "/" + String(timestamp);
-      json.set(tempPath.c_str(), float(temperature));
-      json.set(humPath.c_str(), float(humidity));
-      Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
-    }
-  }
-
+  handleFirebaseUpload();
   button.loop();
+  
+  // Check if the ESP32 should enter sleep mode
   if (!isSleeping && (millis() - lastActivity > sleepTimeout)) {
     enterSleepMode();
   }
@@ -334,12 +294,13 @@ void wakeUp() {
 
 void deepSleep() {
   Serial.println("Entering deep sleep");
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_25, 0); // Use pin 25 to wake up from serial data
+  esp_sleep_enable_ext0_wakeup(WAKE_UP_PIN, 0); // Use pin 25 to wake up from serial data
   esp_sleep_enable_ext1_wakeup(BIT(BUTTON_PIN), ESP_EXT1_WAKEUP_ANY_HIGH); // Use button to wake up
   esp_deep_sleep_start();
 }
 
 void handleFirebaseUpload() {
+  // Check if serial data is available
   if (Serial.available() > 0) {
     String jsonString = Serial.readStringUntil('\n');
     StaticJsonDocument<200> doc;
@@ -351,9 +312,11 @@ void handleFirebaseUpload() {
       return;
     }
 
+    // Extract data from JSON
     temperature = doc["temperature"];
     humidity = doc["humidity"];
 
+    // Upload data to Firebase if ready and the timer delay has passed
     if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
       sendDataPrevMillis = millis();
       timestamp = getTime();
@@ -364,6 +327,9 @@ void handleFirebaseUpload() {
       json.set(tempPath.c_str(), float(temperature));
       json.set(humPath.c_str(), float(humidity));
       Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
+      
+      // Update last activity time
+      lastActivity = millis();
     }
   }
 }

@@ -26,7 +26,7 @@ void loop() {
   // Send JSON string over Serial
   Serial.println(jsonString);
 
-  delay(5000);  // Delay for 5 seconds before sending the next reading
+  delay(50000);  // Delay for 5 seconds before sending the next reading
 }
 
 void temperature(float &h, float &t) {
