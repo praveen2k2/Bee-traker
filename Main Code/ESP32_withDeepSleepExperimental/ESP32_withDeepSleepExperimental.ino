@@ -94,6 +94,8 @@ void setup() {
   if (wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1) {
     Serial.println("Woke up from deep sleep");
     initWiFi();
+    handleFirebaseUpload(); // Process any incoming data immediately after waking up
+    lastActivity = millis();
   } else {
     initWiFi();
     configTime(0, 0, ntpServer);

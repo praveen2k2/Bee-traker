@@ -14,6 +14,7 @@ Button to 23
 */
 
 #include <WiFi.h>
+#include <WiFiManager.h>
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
@@ -24,8 +25,8 @@ Button to 23
 #include "Button2.h"
 
 // WiFi and Firebase configuration
-#define WIFI_SSID "SLT-LTE-WiFi-FA19"
-#define WIFI_PASSWORD "7L0820N1043"
+//#define WIFI_SSID "SLT-LTE-WiFi-FA19"
+//#define WIFI_PASSWORD "7L0820N1043"
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define USER_EMAIL "user@gmail.com"
@@ -172,15 +173,26 @@ void loop() {
   }
 }
 
+// void initWiFi() {
+//   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+//   Serial.print("Connecting to WiFi ..");
+//   while (WiFi.status() != WL_CONNECTED) {
+//     Serial.print('.');
+//     delay(1000);
+//   }
+//   Serial.println(WiFi.localIP());
+//   Serial.println();
+// }
+
 void initWiFi() {
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting to WiFi ..");
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print('.');
-    delay(1000);
+  WiFiManager wm;
+  // wm.resetSettings(); // Uncomment this to reset saved WiFi credentials
+  if (!wm.autoConnect("HiveLink-AP", "")) {
+    Serial.println("Failed to connect and hit timeout");
+    ESP.restart();
   }
+  Serial.println("Connected to WiFi!");
   Serial.println(WiFi.localIP());
-  Serial.println();
 }
 
 unsigned long getTime() {
@@ -285,13 +297,6 @@ void longClick(Button2& btn) {
 
   display.display();
   delay(5000);
-  showMenu();
-  lastActivity = millis();
-}
-
-void doubleClick(Button2& btn) {
-  MainMenu = 0;
-  menuOffset = 0;
   showMenu();
   lastActivity = millis();
 }
