@@ -1,144 +1,123 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const messagesTable = document.getElementById('messagesTable');
+function showGraphs(hiveRef) {
+  let startDateStamp = null;
+  let endDateStamp = null;
+  const temperatureChart = initializeChart('temperatureChart', 'Temperature (°C)', 'rgba(255, 99, 132, 1)', 'rgba(255, 99, 132, 0.2)');
+  const humidityChart = initializeChart('humidityChart', 'Humidity (%)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 0.2)');
 
 
-    function checkHiveConditions(hiveRef) {
-        const dataQuery = query(hiveRef, orderByKey(), limitToLast(1)); // Fetch recent entries
-        onValue(dataQuery, (snapshot) => {
-            const data = snapshot.val();
-            console.log('Data received from Firebase:', data);
+  // Fetch and display the last 10 entries on initial load
+  fetchLastEntries(10);
 
-            if (!data) {
-                console.error("No data available for updates");
-                return;
-            }
+  // Event listener for start date picker
+  document.getElementById('startDateTime').addEventListener('change', (event) => {
+    let selectedDate = new Date(event.target.value);
+    startDateStamp = Math.floor(selectedDate.getTime() / 1000); // Convert to Unix time (seconds)
+    console.log("startDateStamp", startDateStamp)
+  });
 
-            const updatesContainer = document.querySelector('.updates');
-            updatesContainer.innerHTML = ''; // Clear existing updates
-            const messagesTable = document.getElementById('messagesTable');
-            messagesTable.innerHTML = ''; // Clear existing table entries
+  // Event listener for end date picker
+  document.getElementById('endDateTime').addEventListener('change', (event) => {
+    let selectedDate = new Date(event.target.value);
+    endDateStamp = Math.floor(selectedDate.getTime() / 1000); // Convert to Unix time (seconds)
+    console.log("endDateStamp", endDateStamp)
+  });
 
-            // Loop through all entries in the data object
-            Object.entries(data).forEach(([key, entry]) => {
-                const timestamp = new Date(Number(key) * 1000);
-                const timeAgo = timeSince(timestamp);
-                const messages = generateMessages(entry);
+  // Event listener to the filter button
+  document.getElementById('updateGraphs').addEventListener('click', () => fetchData(startDateStamp, endDateStamp));
 
-                messages.forEach(message => {
-                    const updateElement = document.createElement('div');
-                    updateElement.classList.add('update');
-                    updateElement.innerHTML =
-                        `
-                        <div class="message">
-                            <p><b>${message.title}</b>: ${message.body}</p>
-                            <small class="text-muted">${timeAgo}</small>
-                        </div>
-                        `;
-                    updateElement.addEventListener('click', () => {
-                        window.location.href = `#messagesTable`;
-                        // Scroll to the messages table and highlight the corresponding message
-                        const targetRow = document.getElementById(`message-${key}`);
-                        if (targetRow) {
-                            targetRow.scrollIntoView({ behavior: 'smooth' });
-                            targetRow.classList.add('highlight');
-                            setTimeout(() => {
-                                targetRow.classList.remove('highlight');
-                            }, 2000);
-                        }
-                    });
-                    updatesContainer.appendChild(updateElement);
+  // Get the last entries
+  function fetchLastEntries(limit) {
+    const dataQuery = query(hiveRef, orderByKey(), limitToLast(limit));
+    fetchAndDisplayData(dataQuery); 1717211640
+  }
 
-                    // Add the message to the table
-                    const tableRow = document.createElement('tr');
-                    tableRow.id = `message-${key}`;
-                    tableRow.innerHTML = `
-                        <td><span class="material-symbols-outlined">${message.icon}</span></td>
-                        <td>${message.hiveId}</td>
-                        <td class="warning">${timeAgo}</td>
-                        <td class="primary">${message.body}</td>
-                    `;
-                    messagesTable.appendChild(tableRow);
-                });
-            });
-        });
+  function fetchData(startDateStamp, endDateStamp) {
+
+    if (startDateStamp !== null && endDateStamp !== null) {
+      const dataQuery = query(hiveRef, orderByKey(), startAt(startDateStamp.toString()), endAt(endDateStamp.toString())); // Fetch entries between startDateStamp and endDateStamp
+      fetchAndDisplayData(dataQuery);
+    } else {
+      console.log("Please select both start and end dates.");
     }
+  }
 
-    function generateMessages(entry) {
-        const messages = [];
-        const idealTemp = 32;
-        const highTemp = 35;
-        const lowHumidity = 20;
-        const highHumidity = 80;
-        const weightLoss = 10;
+  function fetchAndDisplayData(dataQuery) {
+    onValue(dataQuery, (snapshot) => {
+      const data = snapshot.val();
+      console.log('Data received from Firebase:', data);
 
-        if (entry.temperature < idealTemp) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'emergency_heat',
-                title: `Hive ${entry.hiveId}`,
-                body: `Low temperature of ${entry.temperature}⁰C reported from the hive.`,
-            });
+      if (!data) {
+        console.error("No data available for graphs");
+        return;
+      }
+
+      const timestamps = [];
+      const temperatures = [];
+      const humidities = [];
+
+      // Loop through all entries in the data object
+      Object.entries(data).forEach(([key, entry]) => {
+        const date = new Date(Number(key) * 1000); // Convert timestamp string to number, then to Date
+        const formattedDate = getFormattedDate(date).toLocaleString(); // Format the date to a readable string
+        timestamps.push(formattedDate); // Use formatted date as the label
+        temperatures.push(entry.temperature);
+        humidities.push(entry.humidity);
+      });
+
+      console.log('Timestamps:', timestamps);
+      console.log('Temperatures:', temperatures);
+      console.log('Humidities:', humidities);
+
+      // Update the chart with new data
+      updateChart(temperatureChart, timestamps, temperatures);
+      updateChart(humidityChart, timestamps, humidities);
+    });
+  }
+}
+
+function initializeChart(canvasId, label, borderColor, backgroundColor, dataset) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  return new Chart(ctx, {
+    type: 'line', // Use 'line' chart type for time series data
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: label,
+          data: dataset,
+          borderColor: borderColor, // Line color
+          backgroundColor: backgroundColor, // Area below the line color
         }
-        if (entry.temperature > highTemp) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'emergency_heat',
-                title: `Hive ${entry.hiveId}`,
-                body: `High temperature of ${entry.temperature}⁰C reported from the hive.`,
-            });
-        }
-        if (entry.humidity < lowHumidity) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'water_drop',
-                title: `Hive ${entry.hiveId}`,
-                body: `Low humidity of ${entry.humidity}% reported from the hive.`,
-            });
-        }
-        if (entry.humidity > highHumidity) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'water_drop',
-                title: `Hive ${entry.hiveId}`,
-                body: `High humidity of ${entry.humidity}% reported from the hive.`,
-            });
-        }
-        if (entry.weight < weightLoss) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'scale',
-                title: `Hive ${entry.hiveId}`,
-                body: `Weight loss detected in the hive.`,
-            });
-        }
-        if (entry.feedBees) {
-            messages.push({
-                hiveId: entry.hiveId,
-                icon: 'food_bank',
-                title: `Hive ${entry.hiveId}`,
-                body: `Time to feed the bees.`,
-            });
-        }
-        return messages;
+      ]
+    },
+    options: {
+      scales: {
+        xAxes: [{ // Use 'x' for the x-axis
+          type: 'time', // Enable time scale for x-axis
+          time: {
+            unit: 'minute', // Display timestamps in minutes (adjust as needed)
+            stepSize: 10, // Show a data point every 10 minutes
+          },
+          title: {
+            display: true,
+            text: 'Time'
+          }
+        }],
+        yAxes: [{ // Use 'y' for the y-axis
+          title: {
+            display: true,
+            text: label
+          }
+        }]
+      }
     }
+  });
+}
 
-    function timeSince(date) {
-        const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = Math.floor(seconds / 31536000);
-        if (interval > 1) return interval + ' years ago';
-        interval = Math.floor(seconds / 2592000);
-        if (interval > 1) return interval + ' months ago';
-        interval = Math.floor(seconds / 86400);
-        if (interval > 1) return interval + ' days ago';
-        interval = Math.floor(seconds / 3600);
-        if (interval > 1) return interval + ' hours ago';
-        interval = Math.floor(seconds / 60);
-        if (interval > 1) return interval + ' minutes ago';
-        return Math.floor(seconds) + ' seconds ago';
-    }
-
-    // Example Firebase reference
-    // Replace this with the actual reference from your Firebase setup
-    const hiveRef = ref(database, 'UsersData/your_user_id/Hive-01');
-    checkHiveConditions(hiveRef);
-});
+function updateChart(chart, labels, data) {// labels are the timestamps
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = data;
+  chart.options.scales.y.ticks.suggestedMin = Math.min(...data) - 1; // Set minimum y-axis value slightly below min temperature
+  chart.options.scales.y.ticks.suggestedMax = Math.max(...data) + 1; // Set maximum y-axis value slightly above max temperature
+  chart.update();
+}

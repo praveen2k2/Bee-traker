@@ -1,6 +1,6 @@
 #include "DHT.h"
 #include <ArduinoJson.h>
-#define DHTPIN 7  // Digital pin connected to the DHT sensor
+#define DHTPIN 4  // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -37,7 +37,7 @@ void loop() {
   digitalWrite(WAKE_UP_PIN, LOW);
 
 
-  delay(30000);  // Delay for 30 seconds before sending the next reading
+  delay(1000);  // Delay for 30 seconds before sending the next reading
 }
 
 void temperature(float &h, float &t) {

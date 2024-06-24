@@ -14,7 +14,6 @@ Button to 23
 */
 
 #include <WiFi.h>
-#include <WiFiManager.h>
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
@@ -25,8 +24,8 @@ Button to 23
 #include "Button2.h"
 
 // WiFi and Firebase configuration
-//#define WIFI_SSID "SLT-LTE-WiFi-FA19"
-//#define WIFI_PASSWORD "7L0820N1043"
+#define WIFI_SSID "SLT-LTE-WiFi-FA19"
+#define WIFI_PASSWORD "7L0820N1043"
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define USER_EMAIL "user@gmail.com"
@@ -67,6 +66,7 @@ FirebaseConfig config;
 String uid;
 String tempPath = "/temperature";
 String humPath = "/humidity";
+String countPath = "/count";
 String databasePath;
 String parentPath;
 int timestamp;
@@ -91,7 +91,6 @@ unsigned long getTime();
 void showMenu();
 void click(Button2& btn);
 void longClick(Button2& btn);
-void doubleClick(Button2& btn);
 void enterSleepMode();
 void wakeUp();
 
@@ -128,7 +127,7 @@ void setup() {
   button.begin(BUTTON_PIN);
   button.setClickHandler(click);
   button.setLongClickDetectedHandler(longClick);
-  button.setDoubleClickHandler(doubleClick);
+
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
@@ -173,26 +172,15 @@ void loop() {
   }
 }
 
-// void initWiFi() {
-//   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-//   Serial.print("Connecting to WiFi ..");
-//   while (WiFi.status() != WL_CONNECTED) {
-//     Serial.print('.');
-//     delay(1000);
-//   }
-//   Serial.println(WiFi.localIP());
-//   Serial.println();
-// }
-
 void initWiFi() {
-  WiFiManager wm;
-  // wm.resetSettings(); // Uncomment this to reset saved WiFi credentials
-  if (!wm.autoConnect("HiveLink-AP", "")) {
-    Serial.println("Failed to connect and hit timeout");
-    ESP.restart();
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print('.');
+    delay(1000);
   }
-  Serial.println("Connected to WiFi!");
   Serial.println(WiFi.localIP());
+  Serial.println();
 }
 
 unsigned long getTime() {
