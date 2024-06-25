@@ -24,8 +24,8 @@ Button to 23
 #include "Button2.h"
 
 // WiFi and Firebase configuration
-#define WIFI_SSID "SLT-LTE-WiFi-FA19"
-#define WIFI_PASSWORD "7L0820N1043"
+#define WIFI_SSID "SLT-LTE-WiFi-FA19"    // Your Wifi SSID
+#define WIFI_PASSWORD "7L0820N1043"      // Your Wifi Password
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define USER_EMAIL "user@gmail.com"
@@ -79,7 +79,7 @@ const char* ntpServer = "pool.ntp.org";
 float temperature;
 float humidity;
 float weight = 500;
-int count = 404;
+int count;
 
 // Timer variables
 unsigned long sendDataPrevMillis = 0;
@@ -152,6 +152,7 @@ void loop() {
 
     temperature = doc["temperature"];
     humidity = doc["humidity"];
+    count = doc["count"];
 
     if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
       sendDataPrevMillis = millis();
@@ -162,6 +163,7 @@ void loop() {
       parentPath = databasePath + "/" + String(timestamp);
       json.set(tempPath.c_str(), float(temperature));
       json.set(humPath.c_str(), float(humidity));
+      json.set(countPath.c_str(), int(count));
       Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
     }
   }
