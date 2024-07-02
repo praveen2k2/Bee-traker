@@ -17,23 +17,20 @@ DHT11 dht11(4);
 
 int beeCount = 0;
 bool currentState;
-int lastUpdate,currentTime=0;
+unsigned long lastUpdate;
 
 void setup() {
-  //dht.begin();
   pinMode(ir, INPUT);
   pinMode(loadcell1, INPUT);
   pinMode(loadcell2, INPUT);
   pinMode(loadCSwitch, OUTPUT);
   pinMode(espPower, OUTPUT);
-  pinMode(irPower, OUTPUT);
-
+  pinMode(irPower, OUTPUT);//currently use for indicator
   Serial.begin(9600);
-  while (!Serial) {
-    ;  // wait for serial port to connect. Needed for native USB port only
-  }
-  Serial.println("Starting HiveLink....");
-  Serial.end();
+  Serial.println();
+  powerUp();
+  delay(1000);
+  //dht.begin();
   currentState= digitalRead(ir);
 
 }
@@ -41,8 +38,7 @@ void setup() {
 //use the main loop only for functions which should run on every cycle
 void loop() {
   updateBeeCount(beeCount);
-  update(lastUpdate,beeCount,currentTime);
-  currentTime++;
+  update(lastUpdate,beeCount);
 }
 
 //get bee count 
@@ -51,25 +47,24 @@ void updateBeeCount(int &beeCount){
   if(currentState!=newState){
     beeCount ++;
     currentState=newState;
+    delay(100);
    }
    delay(10);//a delay is need to get readings correctly
   return ;
 }
-void update(int &lastUpdate,int &beeCount,int currentTime){
-  if(currentTime-lastUpdate>10000){
+void update(unsigned long &lastUpdate,int &beeCount){
+  if(millis()-lastUpdate>3600000){
     int h, t;
     float weight;
     dhtdata(h,t);
     sendData(beeCount,h,t,weight);
     beeCount=0;
-    lastUpdate=currentTime;
+    lastUpdate=millis();
   }
-  //else(delay(1));
 }
 //function for send data with esp
 void sendData(int beeCount,int h,int t, float weight){
-  Serial.begin(9600);
-  while (!Serial) {;}
+
   // Create a JSON object
   StaticJsonDocument<200> doc;
   doc["temperature"] = t;
@@ -83,7 +78,6 @@ void sendData(int beeCount,int h,int t, float weight){
   delay(5000);
   // Send JSON string over Serial
   Serial.println(jsonString);
-  Serial.end();
 }
 
 //sensors management 
@@ -134,9 +128,60 @@ void powerMannager() {
 }
 
 void powerUp(){
-  //calibrating IR sensors
-  //chack for each sensor is working
-  //chack for esp32 and its connectivity
+  digitalWrite(irPower,HIGH); 
+  delay(200);
+  digitalWrite(irPower,LOW);
+  delay(50);
+  digitalWrite(irPower,HIGH); 
+  delay(100);
+  digitalWrite(irPower,LOW);
+  delay(50);
+  digitalWrite(irPower,HIGH); 
+  delay(50);
+  digitalWrite(irPower,LOW);
+  delay(1000);
+
+  if(digitalRead(loadcell1)==HIGH){
+    digitalWrite(irPower,HIGH);
+    delay(1000);
+    digitalWrite(irPower,LOW);
+  }
+  while(digitalRead(loadcell1)==HIGH){
+    digitalWrite(espPower,HIGH);
+    if(digitalRead(ir)==HIGH)
+    {digitalWrite(irPower,HIGH);}
+    else{digitalWrite(irPower,LOW);delay(500);}
+    delay(10);
+    if(millis()-lastUpdate>20000){
+    float weight;
+    int temperature=0;
+    int humidity=0;
+    humidity = dht11.readHumidity();
+    if (humidity != DHT11::ERROR_CHECKSUM && humidity != DHT11::ERROR_TIMEOUT) {
+      temperature = dht11.readTemperature();
+      if (temperature != DHT11::ERROR_CHECKSUM && temperature != DHT11::ERROR_TIMEOUT) {;
+      } else {
+        onBoardLED();
+      }
+    } else {
+        onBoardLED();
+        humidity=0;
+    }
+    sendData(0,humidity,temperature,weight);
+    beeCount=0;
+    lastUpdate=millis();
+  }
+  }
+  int humidity = dht11.readHumidity();
+
+    // Check the result of the reading.
+    // If there's no error, print the humidity value.
+    // If there's an error, print the appropriate error message.
+    if (humidity != DHT11::ERROR_CHECKSUM && humidity != DHT11::ERROR_TIMEOUT) {
+        
+    } else {
+        onBoardLED();
+    }
   }
 
 
@@ -145,6 +190,18 @@ void powerUp(){
 
 void onBoardLED(){
   // desply the funtion running ,data communication and some other data from a LED beeps. For error mannaging.
+  digitalWrite(irPower,HIGH); 
+  delay(400);
+  digitalWrite(irPower,LOW);
+  delay(100);
+  digitalWrite(irPower,HIGH); 
+  delay(100);
+  digitalWrite(irPower,LOW);
+  delay(100);
+  digitalWrite(irPower,HIGH); 
+  delay(100);
+  digitalWrite(irPower,LOW);
+  delay(400);
   }
 
 

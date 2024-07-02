@@ -24,8 +24,8 @@ Button to 23
 #include "Button2.h"
 
 // WiFi and Firebase configuration
-#define WIFI_SSID "SLT-LTE-WiFi-FA19"    // Your Wifi SSID
-#define WIFI_PASSWORD "7L0820N1043"      // Your Wifi Password
+#define WIFI_SSID "Praveen" //"SLT-4G_917C9"    // Your Wifi SSID
+#define WIFI_PASSWORD "11111111"      // Your Wifi Password
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define USER_EMAIL "user@gmail.com"
