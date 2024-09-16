@@ -1,15 +1,22 @@
 #include "DHT.h"
 #include <ArduinoJson.h>
-#define DHTPIN 2  // Digital pin connected to the DHT sensor
+#define DHTPIN 4  // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+
+#define WAKE_UP_PIN 10
 
 void setup() {
   Serial.begin(9600);
   dht.begin();
+
+  pinMode(WAKE_UP_PIN, OUTPUT);
 }
 
 void loop() {
+
+  digitalWrite(WAKE_UP_PIN, HIGH);
+
   float h, t;
   // Call the temp_humid function and assign the return values to variables
   temperature(h, t);
@@ -26,7 +33,11 @@ void loop() {
   // Send JSON string over Serial
   Serial.println(jsonString);
 
-  delay(5000);  // Delay for 5 seconds before sending the next reading
+
+  digitalWrite(WAKE_UP_PIN, LOW);
+
+
+  delay(1000);  // Delay for 30 seconds before sending the next reading
 }
 
 void temperature(float &h, float &t) {

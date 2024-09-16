@@ -1,104 +1,84 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Registration</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="auth.css">
     <script src="https://accounts.google.com/gsi/client?hl=fr" async></script>
+    <title>Hive Link</title>
+    <link rel="icon" type="image/x-icon" href="../assest/favicon.ico">
 </head>
 
 <body>
-    <section class="login-body">
-        <div class="login-container">
-            <div class="toggle-buttons">
-                <button class="btn btn-primary active" id="loginBtn">SIGN IN</button>
-                <button class="btn btn-primary" id="registerBtn">SIGN UP</button>
-            </div>
 
-            <!-- Login Form -->
-            <form id="loginForm" action="" method="post">
-
-                <!-- sign in with google -->
-                <div class="social-buttons">
-                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
-                        data-text="signin_with" data-size="large" data-logo_alignment="center">
-                    </div>
+    <div class="container" id="container">
+        <!-- sign up -->
+        <div class="form-container sign-up">
+            <form>
+                <h1>Create Account</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon" id="g-sign-in"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <div class="or-separator">
-                    <p>OR</p>
-                </div>
-                <input type="hidden" name="login">
-                <div class="form-group">
-                    <label for="loginEmail">Email:</label>
-                    <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required
-                        name="email">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password:</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password"
-                            required name="password">
-                    </div>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe" name="Remember">
-                    <label class="form-check-label" for="rememberMe">Remember Me</label>
-                </div>
-                <div class="form-group">
-                    <a href="#" id="forgotPassword">Forgot Password?</a>
-                </div>
-                <span>By clicking "Sign in," you agree to our <a href="#">Terms of Use</a> and our <a href="#">Privacy
-                        Policy</a>.</span>
-                <button type="submit" class="btn btn-primary btn-block" id="sign-in">Sign In</button>
-            </form>
-
-            <!-- Registration Form -->
-            <form id="registerForm" style="display: none;" action="" method="post">
-                <input type="hidden" name="reg_user">
-                <fieldset>
-                    <div class="social-buttons">
-                        <!-- sign up with google -->
-                        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
-                            data-text="signup_with" data-size="large" data-logo_alignment="center">
-                        </div>
-                    </div>
-                    <div class="or-separator">
-                        <p>OR</p>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerName">Name:</label>
-                        <input type="text" class="form-control" id="registerName" placeholder="Enter your name"
-                            name="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">Email:</label>
-                        <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email"
-                            name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Password:</label>
-                        <input type="password" class="form-control" id="registerPassword"
-                            placeholder="Enter your password" name="password" required>
-                    </div>
-                    <span>By clicking "Sign up," you agree to our <a href="#">Terms of Use</a> and our <a
-                            href="#">Privacy Policy</a>.</span>
-                    <button type="submit" class="btn btn-primary btn-block" value="Sign up" id="sign-up">Sign Up</button>
-                </fieldset>
+                <span>or use your email for registeration</span>
+                <input type="text" placeholder="Name" id="userName" required>
+                <input type="email" placeholder="Email" id="registerEmail" required>
+                <input type="password" placeholder="Password" id="registerPassword" required>
+                <button id="sign-up">Sign Up</button>
             </form>
         </div>
-    </section>
 
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- sign in -->
+        <div class="form-container sign-in">
+            <form>
+                <h1>Sign In</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email password</span>
+                <input type="email" placeholder="Email" id="loginEmail" required>
+                <input type="password" placeholder="Password" id="loginPassword" required>
+                <a href="#">Forget Your Password?</a>
+                <button id="sign-in">Sign In</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome!</h1>
+                    <p>Enter your personal details to use all of site features</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello!</h1>
+                    <p>Register with your personal details to use all of site features</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="module" src="./script.js"></script>
     <script type="module" src="../index.js"></script>
+    <script>
+        const container = document.getElementById('container');
+        const registerBtn = document.getElementById('register');
+        const loginBtn = document.getElementById('login');
+
+        registerBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        loginBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+    </script>
 </body>
 
 </html>

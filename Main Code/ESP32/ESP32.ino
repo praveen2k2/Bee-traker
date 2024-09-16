@@ -24,8 +24,8 @@ Button to 23
 #include "Button2.h"
 
 // WiFi and Firebase configuration
-#define WIFI_SSID "SLT-LTE-WiFi-FA19"
-#define WIFI_PASSWORD "7L0820N1043"
+#define WIFI_SSID "Praveen" //"SLT-4G_917C9"    // Your Wifi SSID
+#define WIFI_PASSWORD "11111111"      // Your Wifi Password
 #define API_KEY "AIzaSyA6RyU5sX58C9uhyN1QYAvbMZhn8m3eP3Y"
 #define DATABASE_URL "https://hivelink-abd1a-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define USER_EMAIL "user@gmail.com"
@@ -66,6 +66,7 @@ FirebaseConfig config;
 String uid;
 String tempPath = "/temperature";
 String humPath = "/humidity";
+String countPath = "/count";
 String databasePath;
 String parentPath;
 int timestamp;
@@ -78,7 +79,7 @@ const char* ntpServer = "pool.ntp.org";
 float temperature;
 float humidity;
 float weight = 500;
-int count = 404;
+int count;
 
 // Timer variables
 unsigned long sendDataPrevMillis = 0;
@@ -90,7 +91,6 @@ unsigned long getTime();
 void showMenu();
 void click(Button2& btn);
 void longClick(Button2& btn);
-void doubleClick(Button2& btn);
 void enterSleepMode();
 void wakeUp();
 
@@ -127,7 +127,7 @@ void setup() {
   button.begin(BUTTON_PIN);
   button.setClickHandler(click);
   button.setLongClickDetectedHandler(longClick);
-  button.setDoubleClickHandler(doubleClick);
+
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
@@ -152,6 +152,7 @@ void loop() {
 
     temperature = doc["temperature"];
     humidity = doc["humidity"];
+    count = doc["count"];
 
     if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)) {
       sendDataPrevMillis = millis();
@@ -162,6 +163,7 @@ void loop() {
       parentPath = databasePath + "/" + String(timestamp);
       json.set(tempPath.c_str(), float(temperature));
       json.set(humPath.c_str(), float(humidity));
+      json.set(countPath.c_str(), int(count));
       Serial.printf("Set json... %s\n", Firebase.RTDB.setJSON(&fbdo, parentPath.c_str(), &json) ? "ok" : fbdo.errorReason().c_str());
     }
   }
@@ -285,13 +287,6 @@ void longClick(Button2& btn) {
 
   display.display();
   delay(5000);
-  showMenu();
-  lastActivity = millis();
-}
-
-void doubleClick(Button2& btn) {
-  MainMenu = 0;
-  menuOffset = 0;
   showMenu();
   lastActivity = millis();
 }

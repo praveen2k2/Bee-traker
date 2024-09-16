@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+body{
+    font-family: roboto, sans-serif;
+    color: #fff;
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    min-height: 100vh;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 60px;
+    color: #2656ce
+}
+p {
+    font-size: 20px;
+    text-decoration: none;
+    padding-bottom: 5%;
+}
+
+/* ==================MEDIA QURIES - TABLET==================== */
+@media screen and (max-width: 1200px) {
+    .container {
+        width: 94%;
+    }
+
+    h1 {
+        font-size: 48px;
+    }
+
+    p {
+        font-size: 18px;
+    }
+
+
+}
+
+/* ==================MEDIA QURIES - MOBILE==================== */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+    h1 {
+        font-size: 45px;
+    }
+
+    p {
+        font-size: 15px;
+    }
+}

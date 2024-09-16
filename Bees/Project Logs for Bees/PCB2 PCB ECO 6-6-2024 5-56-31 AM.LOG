@@ -1,0 +1,3 @@
+Removed Pin From Net: NetName=rx Pin=R15-1
+Removed Member From Class: ClassName=atmega Member=R15
+Added Pin To Net: NetName=rx Pin=MD?-35
